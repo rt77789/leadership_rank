@@ -1,44 +1,75 @@
 
-d = read.table('../data/sp_128.data', header=T)
+set.seed(seed=1)
 
-col = 100 # ncol(d)
-row = nrow(d)
-
-mat = matrix(0, nrow = col, ncol = col)
-
-
-rownames(mat) = colnames(d)[1:col]
-colnames(mat) = colnames(d)[1:col]
-lags = mat
-
-### Threshold, which is used to filter the too small cross-correlation coefficient.
-threshold = 0.4
-
-ptm = proc.time()
-
-for(i in 1:col) {
-  for(j in 1:col) {
-    
-    if(var(d[,i]) == 0 || var(d[,j]) == 0) {
-      mat[i,j] = 0
-    }
-    else {    
-      res = ccf(d[,i], d[,j], type='correlation', lag.max=row/2, plot=F)
+#### Build the graph of stock relationships.
+build_graph <- function(threshold = 0.4) {
+  d = read.table('../data/sp_128.data', header=T)
+  
+  col = ncol(d) # ncol(d)
+  row = nrow(d)
+  
+  mat = matrix(0, nrow = col, ncol = col)
+  
+  rownames(mat) = colnames(d)[1:col]
+  colnames(mat) = colnames(d)[1:col]
+  lags = mat
+  
+  ### Threshold, which is used to filter the too small cross-correlation coefficient.
+ # threshold = 0.4
+  
+  ptm = proc.time()
+  
+  for(i in 1:col) {
+    for(j in 1:col) {
       
-      pos = which(res$acf == max(res$acf))
-      
-      if(res$lag[pos] < 0 && res$acf[pos] > threshold) {
-        ### x lead y.
-        ### Make sure the correlation is positive and bigger than the threshold.
-        mat[i,j] = res$acf[pos]
-        lags[i,j] = pos - row/2 - 1
-      }
-      else {
+      if(var(d[,i]) == 0 || var(d[,j]) == 0) {
         mat[i,j] = 0
+      }
+      else {    
+        res = ccf(d[,i], d[,j], type='correlation', lag.max=row/2, plot=F)
+        
+        pos = which(res$acf == max(res$acf))[1]
+        
+        if(res$lag[pos] > 0 && res$acf[pos] > threshold) {
+          ### x lead y.
+          ### Make sure the correlation is positive and bigger than the threshold.
+          mat[i,j] = res$acf[pos]
+          lags[i,j] = pos - row/2 - 1
+        }
+        else {
+          mat[i,j] = 0
+        }
       }
     }
   }
+  print(proc.time() - ptm)
+  
+  mat
 }
-proc.time() - ptm
 
 ### 
+page_rank <- function(mat, max_error = 1e-6, lambda = 0.85) {
+  n = nrow(mat)
+  ### Normalize each row, if sum of each row is zero, then leave them as all zeros.
+  #mat = t(apply(mat, 1, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
+  #mat = t(apply(mat, 1, function(x) { if(sum(x) > 0) { (x > -1) * 1./ n } else {x}}))
+  
+  mat = lambda * mat + matrix((1 - lambda) / n, n, n)
+  
+  rank = matrix(runif(n * 1), n, 1)
+  prank = matrix(Inf, n, 1)
+  
+  while( sum((rank - prank)**2) > max_error ) {
+    prank = rank;
+    
+    rank = mat %*% rank
+    rank = apply(rank, 2, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}})
+  }
+  rank
+}
+
+disp_stock_rank <- function(rank) {
+  ro = order(rank, decreasing=T)
+  matrix(c(rownames(rank)[ro], rank[ro]), ncol=2, byrow=F)
+}
+
