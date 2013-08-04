@@ -5,7 +5,7 @@ set.seed(seed=1)
 build_graph <- function(threshold = 0.4) {
   d = read.table('../data/sp_128.data', header=T)
   
-  col = ncol(d) # ncol(d)
+  col = ncol(d)
   row = nrow(d)
   
   mat = matrix(0, nrow = col, ncol = col)
@@ -20,6 +20,7 @@ build_graph <- function(threshold = 0.4) {
   ptm = proc.time()
   
   for(i in 1:col) {
+    print(i)
     for(j in 1:col) {
       
       if(var(d[,i]) == 0 || var(d[,j]) == 0) {
@@ -74,10 +75,14 @@ disp_stock_rank <- function(rank) {
 }
 
 run <- function() {
+  sink('../data/cal_correlation.log')
+  
   mat = build_graph(0)
   write.table(mat, file='../data/all_comps_thresh_0.data', row.names=T, col.names=T)
   
-  rank = page_rank(mat2)
+  rank = page_rank(mat)
   rr = disp_stock_rank(rank)
   write.table(rr, file='../data/all_comps_thresh_0.rank', row.names=F, col.names=F, quote=F)
+  
+  sink()
 }
