@@ -1,2 +1,10 @@
 
 Leadership ranking.
+
+Construction of graph:
+
+mat2 = build_graph(0)
+-------------------------------
+user    system   elapsed 
+67564.978    84.901 67728.162 
+-------------------------------

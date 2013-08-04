@@ -1,3 +1,2 @@
 
-0. Pagerank is added.
-1. to do: store mat2 data and calculate sector's influence.
+1. The elapsed time of mat2 = build_graph(0) is pasted in readme file.
