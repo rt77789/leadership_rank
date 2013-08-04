@@ -24,7 +24,7 @@ sub gen_common_data {
     }
 
     my @resd;
-    $md -= 100;
+    $md -= 500;
     for (keys %date) {
         push @resd, $_ if $date{$_} > $md;
     }
@@ -56,9 +56,9 @@ sub data_build {
         while(<HP>) {
             chomp;
             my @tk = split /,/;
-            next unless defined $com_date{$tk[0]};
+            last unless defined $com_date{$tk[0]};
 
-            print STDERR "$tk[0], $tk[4]\n";
+            #print STDERR "$tk[0], $tk[4]\n";
 
             push @cp, $tk[4];
             last if @cp == $K;
@@ -67,6 +67,9 @@ sub data_build {
         
         if(@cp >= $K) {
             $data{$file} = \@cp;
+        }
+        else {
+            print STDERR $#cp+1, ", $K\n";
         }
     }
 
