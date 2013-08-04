@@ -73,3 +73,11 @@ disp_stock_rank <- function(rank) {
   matrix(c(rownames(rank)[ro], rank[ro]), ncol=2, byrow=F)
 }
 
+run <- function() {
+  mat = build_graph(0)
+  write.table(mat, file='../data/all_comps_thresh_0.data', row.names=T, col.names=T)
+  
+  rank = page_rank(mat2)
+  rr = disp_stock_rank(rank)
+  write.table(rr, file='../data/all_comps_thresh_0.rank', row.names=F, col.names=F, quote=F)
+}
