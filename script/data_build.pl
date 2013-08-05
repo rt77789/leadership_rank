@@ -37,7 +37,7 @@ sub data_build {
     ### read common date.
     open COM, "<../data/common_date.info" or die "open ../data/common_date.info failed...\n";
     my %com_date;
-    my $K = 400;
+    my $K = 128;
     my $cn = 0;
     while(<COM>) {
         chomp;
@@ -90,7 +90,7 @@ sub sp500_build {
     ### read common date.
     open COM, "<../data/common_date.info" or die "open ../data/common_date.info failed...\n";
     my %com_date;
-    my $K = 400;
+    my $K = 128;
     my $cn = 0;
     while(<COM>) {
         chomp;
@@ -151,6 +151,6 @@ sub sp500_build {
 }
 
 #&gen_common_data;
-#&data_build;
-&sp500_build;
+&data_build;
+#&sp500_build;
 
