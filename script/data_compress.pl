@@ -2,7 +2,7 @@
 
 ###
 my $cn = <>;
-open MP, ">../data/company.list" or die "open ../data/company.list fail.\n";
+open MP, ">../data/company.map" or die "open ../data/company.map fail.\n";
 print MP $cn;
 close MP;
 

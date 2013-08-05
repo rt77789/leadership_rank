@@ -1,2 +1,2 @@
 
-1. mat %*% rank causes errors, I'll fix it next.
+1. recover the company.list file, previous compress version override it.
