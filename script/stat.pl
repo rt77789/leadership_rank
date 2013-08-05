@@ -65,4 +65,44 @@ sub get_nonexist_file {
     print "nonexist files number=$count\n";
 }
 
-&get_nonexist_file;
+sub count_industry {
+    open LIST, "<../data/company.list" or die "../data/company.list";
+    while(<LIST>) {
+        chomp;
+        s{^\[(.*?)\]}{}is or die "sector match error!!\n";
+        my $sec = $1;
+        print "$sec\n";
+        while(s{^\[(.*?)\]}{}is) {
+            my $temp = $1;
+            my $delimit = chr(5);
+            my @comps = split /$delimit/, $temp;
+            my $indust = shift @comps;
+
+            $indust =~ s{\(http:.*?\)$}{}isg;
+
+            @comps = map { s{\(http:.*?\)$}{}isg; $_ } @comps;
+
+            $sp{$sec}->{$indust} = \@comps;
+            print "\t$indust\n";
+
+            print "\t\t$_\n" for (@comps);
+
+            $comp_num += @comps;
+        }
+    }
+    print STDERR "companies number=$comp_num\n";
+    close LIST;
+
+    ####
+    my $indus_num = 0;
+    for my $k (keys %sp) {
+        my @a = keys %{$sp{$k}};
+        print "sector=$k, industry_num=", $#a+1, "\n";
+        $industry_num += $#a + 1;
+    }
+    print "total industry_num=$industry_num\n";
+}
+
+#&get_nonexist_file;
+
+&count_industry;

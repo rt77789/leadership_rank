@@ -1,12 +1,12 @@
 
 Leadership ranking.
 
-Construction of graph:
+Construction of graph (all 4300+ companies and 200 days' price):
 
 mat2 = build_graph(0)
 -------------------------------
 user    system   elapsed 
-67564.978    84.901 67728.162 
+53803.495    62.023 53927.537 
 -------------------------------
 
 Top 50 companies:

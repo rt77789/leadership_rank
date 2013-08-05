@@ -3,49 +3,67 @@ set.seed(seed=1)
 
 #### Build the graph of stock relationships.
 build_graph <- function(threshold = 0.4) {
-  d = read.table('../data/sp_128.data', header=T)
+  dd = read.table('../data/sp500_200.data', header=T)
   
-  col = ncol(d)
-  row = nrow(d)
   
-  mat = matrix(0, nrow = col, ncol = col)
+  piece = 0;
   
-  rownames(mat) = colnames(d)[1:col]
-  colnames(mat) = colnames(d)[1:col]
-  lags = mat
+  row = nrow(dd)
+  block = row
   
-  ### Threshold, which is used to filter the too small cross-correlation coefficient.
- # threshold = 0.4
+  mat2 = matrix(0, nrow = ncol(dd), ncol = ncol(dd))
   
   ptm = proc.time()
   
-  for(i in 1:col) {
-    print(i)
-    for(j in 1:col) {
-      
-      if(var(d[,i]) == 0 || var(d[,j]) == 0) {
-        mat[i,j] = 0
-      }
-      else {    
-        res = ccf(d[,i], d[,j], type='correlation', lag.max=row/2, plot=F)
-        
-        pos = which(res$acf == max(res$acf))[1]
-        
-        if(res$lag[pos] > 0 && res$acf[pos] > threshold) {
-          ### x lead y.
-          ### Make sure the correlation is positive and bigger than the threshold.
-          mat[i,j] = res$acf[pos]
-          lags[i,j] = pos - row/2 - 1
-        }
-        else {
+  for(step in seq(from=1, to=row, by=block/2)) {
+    if(step + block-1 > row) {break}
+    piece = piece + 1
+    d = dd[seq(step,step+block-1),]
+    # Compute the relative change.
+    #d = apply(d, 2, function(x) { x[-1] - x[-length(x)] })
+    
+    col = ncol(d)
+    
+    
+    mat = matrix(0, nrow = col, ncol = col)
+    
+    rownames(mat) = colnames(d)[1:col]
+    colnames(mat) = colnames(d)[1:col]
+    lags = mat
+    
+    ### Threshold, which is used to filter the too small cross-correlation coefficient.
+    # threshold = 0.4
+    
+    
+    
+    for(i in 1:col) {
+      print(i)
+      for(j in 1:col) {
+        if(var(d[,i]) == 0 || var(d[,j]) == 0) {
           mat[i,j] = 0
+        }
+        else {    
+          res = ccf(d[,i], d[,j], type='correlation', lag.max=row/2, plot=F)
+          
+          pos = which(res$acf == max(res$acf))[1]
+          
+          if(res$lag[pos] > 0 && res$acf[pos] > threshold) {
+            ### x lead y.
+            ### Make sure the correlation is positive and bigger than the threshold.
+            mat[i,j] = res$acf[pos]
+            lags[i,j] = pos - row/2 - 1
+          }
+          else {
+            mat[i,j] = 0
+          }
         }
       }
     }
+    mat2 = mat2 + mat
   }
   print(proc.time() - ptm)
-  
-  mat
+  mat2 = mat2 / piece;
+  mat2
 }
 
 ### 
@@ -88,11 +106,11 @@ run <- function() {
   sink('../data/cal_correlation.log')
   
   mat = build_graph(0)
-  write.table(mat, file='../data/all_comps_thresh_0.data', row.names=T, col.names=T)
+  write.table(mat, file='../data/sp500_comps_thresh_0.data', row.names=T, col.names=T)
   
   rank = page_rank(mat)
   rr = disp_stock_rank(rank)
-  write.table(rr, file='../data/all_comps_thresh_0.rank', row.names=F, col.names=F, quote=F)
+  write.table(rr, file='../data/sp500_comps_thresh_0.rank', row.names=F, col.names=F, quote=F)
   
   sink()
 }
