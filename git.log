@@ -1,2 +1,2 @@
 
-1. recover the company.list file, previous compress version override it.
+1. Add sp_500.list, but current file only contains 497 companies, I will fix it soon.
