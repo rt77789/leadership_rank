@@ -74,6 +74,16 @@ disp_stock_rank <- function(rank) {
   matrix(c(rownames(rank)[ro], rank[ro]), ncol=2, byrow=F)
 }
 
+### Read compressed data, but it's still non-efficienct.
+read_compress_data <-function(fd, fm) {
+  cd = read.table('../data/all_comps_thresh_0.compress', header=F)
+  cname = colnames(read.table('../data/company.list', header=T))
+  
+  mat = matrix(0, length(cname), length(cname))
+  mat = apply(cd, 1, function(x) { mat[x[1], x[2]] = x[3]}) 
+}
+
+#####
 run <- function() {
   sink('../data/cal_correlation.log')
   
@@ -86,3 +96,5 @@ run <- function() {
   
   sink()
 }
+
+####

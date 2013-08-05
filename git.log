@@ -1,4 +1,2 @@
 
-1. Fix the non-consistent date error, now all price data are with same timestamp.
-2. sink() to record the log information.
-3. to do: redo the build_graph() and compute the ranks of each company.
+1. mat %*% rank causes errors, I'll fix it next.
