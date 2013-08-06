@@ -6,6 +6,7 @@ build_graph <- function(fd, threshold = 0.4) {
   #dd = read.table('../data/sp500_200.data', header=T)
   dd = read.table(fd, header=T)
   piece = 0;
+  lag.max = 14
   
   row = nrow(dd)
   block = row
@@ -19,7 +20,7 @@ build_graph <- function(fd, threshold = 0.4) {
     piece = piece + 1
     d = dd[seq(step,step+block-1),]
     # Compute the relative change.
-    #d = apply(d, 2, function(x) { x[-1] - x[-length(x)] })
+    #d = apply(d, 2, function(x) { (x[-1] - x[-length(x)]) / x[-length(x)] })
     
     col = ncol(d)
     
@@ -42,7 +43,7 @@ build_graph <- function(fd, threshold = 0.4) {
           mat[i,j] = 0
         }
         else {    
-          res = ccf(d[,i], d[,j], type='correlation', lag.max=row/2, plot=F)
+          res = ccf(d[,i], d[,j], type='correlation', lag.max=lag.max, plot=F)
           
           pos = which(res$acf == max(res$acf))[1]
           

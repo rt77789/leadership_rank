@@ -151,6 +151,6 @@ sub sp500_build {
 }
 
 #&gen_common_data;
-&data_build;
-#&sp500_build;
+#&data_build;
+&sp500_build;
 
