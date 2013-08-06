@@ -1,14 +1,27 @@
 
 Leadership ranking.
 
-Construction of graph (S&P 500 companies (420 are used) and 200 days' price):
+Construction of graph (S&P 500 companies (481 are used) and 128 days' price):
 
 mat2 = build_graph(0)
 -------------------------------
-user    system   elapsed 
-453.601   0.508 454.846 
+user  system elapsed 
+485.076   0.893 482.536 
 -------------------------------
-
+     Consumer Discretionary            Consumer Staples                      Energy                  Financials 
+                 0.18793641                  0.07263374                  0.05972174                  0.14934028 
+                Health Care                 Industrials      Information Technology                   Materials 
+                 0.13556144                  0.12676346                  0.11148217                  0.06910500 
+Telecommunications Services                   Utilities 
+                 0.01238419                  0.07507157 
+-------------------------------
+                Health Care                   Materials      Consumer Discretionary                   Utilities 
+                0.002658067                 0.002468036                 0.002440733                 0.002274896 
+           Consumer Staples Telecommunications Services                 Industrials                  Financials 
+                0.002075250                 0.002064032                 0.001980679                 0.001843707 
+     Information Technology                      Energy 
+                0.001689124                 0.001493043 
+-------------------------------
 S&P 500 ranks:
 -------------------------------
 TYC.raw 0.00560619273125733
