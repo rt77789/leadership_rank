@@ -102,14 +102,14 @@ read_compress_data <-function(fd, fm) {
 
 #####
 run <- function() {
-  sink('../data/cal_correlation.log')
+  sink('../data/sp_128_comps_thresh_0.log')
   
-  mat = build_graph('../data/sp500_128.data', 0)
-  write.table(mat, file='../data/sp500_128_comps_thresh_0.data', row.names=T, col.names=T)
+  mat = build_graph('../data/sp_128.data', 0)
+  write.table(mat, file='../data/sp_128_comps_thresh_0.data', row.names=T, col.names=T)
   
   rank = page_rank(mat)
   rr = disp_stock_rank(rank)
-  write.table(rr, file='../data/sp500_128_comps_thresh_0.rank', row.names=F, col.names=F, quote=F)
+  write.table(rr, file='../data/sp_128_comps_thresh_0.rank', row.names=F, col.names=F, quote=F)
   
   sink()
 }
