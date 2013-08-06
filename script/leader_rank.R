@@ -20,7 +20,7 @@ build_graph <- function(fd, threshold = 0.4) {
 		piece = piece + 1
 		d = dd[seq(step,step+block-1),]
 		# Compute the relative change.
-		#d = apply(d, 2, function(x) { (x[-1] - x[-length(x)]) / x[-length(x)] })
+		d = apply(d, 2, function(x) { (x[-1] - x[-length(x)]) / x[-length(x)] })
 
 		col = ncol(d)
 
@@ -69,9 +69,9 @@ build_graph <- function(fd, threshold = 0.4) {
 ### 
 page_rank <- function(mat, max_error = 1e-6, lambda = 0.85) {
 	n = nrow(mat)
-	### Normalize each row, if sum of each row is zero, then leave them as all zeros.
-	#mat = t(apply(mat, 1, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
-	#mat = t(apply(mat, 1, function(x) { if(sum(x) > 0) { (x > -1) * 1./ n } else {x}}))
+	### Normalize each column, if sum of each row is zero, then leave them as all zeros.
+	mat = t(apply(mat, 2, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
+	#mat = t(apply(mat, 2, function(x) { if(sum(x) > 0) { (x > -1) * 1./ n } else {x}}))
 
 	rank = matrix(runif(n * 1), n, 1)
 	prank = matrix(Inf, n, 1)
@@ -86,13 +86,15 @@ page_rank <- function(mat, max_error = 1e-6, lambda = 0.85) {
 }
 
 ## Circuit Model.
-cal_single_potential <- function(node, mat, iternum = 10, lambda = 0.85) {
+cal_single_potential <- function(node, mat, iternum = 50, lambda = 0.85) {
 	n = nrow(mat)
 	poten = matrix(0, n, 1)
 	envec = matrix(0, n, 1)
 	envec[node] = 1
 
-	mat = t(apply(mat, 1, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
+	# Make sure each column of mat is normalized, which means sum of each column is 1.
+	mat = t(apply(mat, 2, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
+
 	for(i in 1:iternum) {
 		poten = lambda * (mat %*% poten + envec);
 	}
@@ -105,7 +107,8 @@ cal_potential <- function(mat) {
 	n = nrow(mat)
 
 	rank = sapply(1:n, function(x) { sum(cal_single_potential(x, mat)) })
-	names(rank) = colnames(mat)
+	rank = matrix(rank, n, 1)
+	rownames(rank) = colnames(mat)
 	rank
 }
 
@@ -132,18 +135,35 @@ read_compress_data <-function(fd, fm) {
 
 #####
 run <- function() {
-	epf = '../data/sp500_128'
+	#epf = '../data/sp500_128'
 	sink(paste(epf, '.log', sep=''))
 
 	mat = build_graph(paste(epf, '.data', sep=''), 0)
 	write.table(mat, file=paste(epf, '_comps_thresh_0.data', sep=''), row.names=T, col.names=T)
 
+	#### Pagerank Model #####
 	rank = page_rank(mat)
 	rr = disp_stock_rank(rank)
+
 	write.table(rr, file=paste(epf, '_comps_thresh_0.rank', sep=''), row.names=F, col.names=F, quote=F)
 
 	# Compute the sum influence of each sector.
-	print(sapply(levels(as.factor(rr[,4])), function(x) { sum(as.numeric(rr[which(x == rr[,4]), 2])) }))
+	print('Sum influence of each sector in Pagerank Model.')
+	print(sort(sapply(levels(as.factor(rr[,4])), function(x) { sum(as.numeric(rr[which(x == rr[,4]), 2])) }), decreasing=T))
+	print('Mean influence of each sector in Pagerank Model.')
+	# Compute the mean influence of each sector.
+	print(sort(sapply(levels(as.factor(rr[,4])), function(x) { mean(as.numeric(rr[which(x == rr[,4]), 2])) }), decreasing=T))
+
+	###### Circuit model. ######
+	rank = cal_potential(mat)
+	rr = disp_stock_rank(rank)
+
+	write.table(rr, file=paste(epf, '_comps_thresh_0.crank', sep=''), row.names=F, col.names=F, quote=F)
+
+	# Compute the sum influence of each sector.
+	print('Sum influence of each sector in Circuit Model.')
+	print(sort(sapply(levels(as.factor(rr[,4])), function(x) { sum(as.numeric(rr[which(x == rr[,4]), 2])) }), decreasing=T))
+	print('Mean influence of each sector in Circuit Model.')
 	# Compute the mean influence of each sector.
 	print(sort(sapply(levels(as.factor(rr[,4])), function(x) { mean(as.numeric(rr[which(x == rr[,4]), 2])) }), decreasing=T))
 
@@ -151,3 +171,4 @@ run <- function() {
 }
 
 ####
+
