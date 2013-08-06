@@ -47,8 +47,8 @@ build_graph <- function(fd, threshold = 0.4) {
 
 					pos = which(res$acf == max(res$acf))[1]
 
-					if(res$lag[pos] > 0 && res$acf[pos] > threshold) {
-						### x lead y.
+					if(res$lag[pos] < 0 && res$acf[pos] > threshold) {
+						### i lead j, and pagerank works at this style.
 						### Make sure the correlation is positive and bigger than the threshold.
 						mat[i,j] = res$acf[pos]
 						lags[i,j] = pos - row/2 - 1
@@ -73,17 +73,39 @@ page_rank <- function(mat, max_error = 1e-6, lambda = 0.85) {
 	#mat = t(apply(mat, 1, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
 	#mat = t(apply(mat, 1, function(x) { if(sum(x) > 0) { (x > -1) * 1./ n } else {x}}))
 
-	mat = lambda * mat + matrix((1 - lambda) / n, n, n)
-
 	rank = matrix(runif(n * 1), n, 1)
 	prank = matrix(Inf, n, 1)
 
 	while( sum((rank - prank)**2) > max_error ) {
 		prank = rank;
 
-		rank = mat %*% rank
+		rank = lambda * mat %*% rank + matrix((1 - lambda) / n, n, 1)
 		rank = apply(rank, 2, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}})
 	}
+	rank
+}
+
+## Circuit Model.
+cal_single_potential <- function(node, mat, iternum = 10, lambda = 0.85) {
+	n = nrow(mat)
+	poten = matrix(0, n, 1)
+	envec = matrix(0, n, 1)
+	envec[node] = 1
+
+	mat = t(apply(mat, 1, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
+	for(i in 1:iternum) {
+		poten = lambda * (mat %*% poten + envec);
+	}
+
+	poten = poten / poten[node]
+}
+
+## Compute potentials
+cal_potential <- function(mat) {
+	n = nrow(mat)
+
+	rank = sapply(1:n, function(x) { sum(cal_single_potential(x, mat)) })
+	names(rank) = colnames(mat)
 	rank
 }
 

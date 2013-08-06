@@ -1,2 +1,5 @@
 
-1. revise readme file, to do: circuit model.
+1. the cal_single_potential is not consistent with pagerank, I'll find out the reason.
+2. revise the readme, because previous pagerank's computation is not right, and the matrix is valided now, mat[i,j] means j -> i and i leads j.
+3. to do: fix the cal_single_potential problem.
+
