@@ -1,7 +1,7 @@
 
 Leadership ranking.
 
-Construction of graph (S\&P 500 companies (420 are used) and 200 days' price):
+Construction of graph (S&P 500 companies (420 are used) and 200 days' price):
 
 mat2 = build_graph(0)
 -------------------------------
@@ -9,7 +9,7 @@ user    system   elapsed
 453.601   0.508 454.846 
 -------------------------------
 
-S\&P 500 ranks:
+S&P 500 ranks:
 -------------------------------
 TYC.raw 0.00560619273125733
 TSN.raw 0.00531686971657922
