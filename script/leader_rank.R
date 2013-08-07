@@ -20,7 +20,7 @@ build_graph <- function(fd, threshold = 0.4) {
 		piece = piece + 1
 		d = dd[seq(step,step+block-1),]
 		# Compute the relative change.
-		d = apply(d, 2, function(x) { (x[-1] - x[-length(x)]) / x[-length(x)] })
+		#d = apply(d, 2, function(x) { (x[-1] - x[-length(x)]) / x[-length(x)] })
 
 		col = ncol(d)
 
@@ -135,7 +135,7 @@ read_compress_data <-function(fd, fm) {
 
 #####
 run <- function() {
-	#epf = '../data/sp500_128'
+	epf = '../data/sp_128'
 	sink(paste(epf, '.log', sep=''))
 
 	mat = build_graph(paste(epf, '.data', sep=''), 0)
