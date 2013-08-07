@@ -70,7 +70,7 @@ build_graph <- function(fd, threshold = 0.4) {
 page_rank <- function(mat, max_error = 1e-6, lambda = 0.85) {
 	n = nrow(mat)
 	### Normalize each column, if sum of each row is zero, then leave them as all zeros.
-	mat = t(apply(mat, 2, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
+	#mat = t(apply(mat, 2, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
 	#mat = t(apply(mat, 2, function(x) { if(sum(x) > 0) { (x > -1) * 1./ n } else {x}}))
 
 	rank = matrix(runif(n * 1), n, 1)
@@ -92,10 +92,7 @@ cal_single_potential <- function(node, mat, iternum = 50, lambda = 0.85) {
 	envec = matrix(0, n, 1)
 	envec[node] = 1
 
-	# Make sure each column of mat is normalized, which means sum of each column is 1.
-	mat = t(apply(mat, 2, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
-
-	for(i in 1:iternum) {
+		for(i in 1:iternum) {
 		poten = lambda * (mat %*% poten + envec);
 	}
 
@@ -104,6 +101,11 @@ cal_single_potential <- function(node, mat, iternum = 50, lambda = 0.85) {
 
 ## Compute potentials
 cal_potential <- function(mat) {
+
+# Make sure each column of mat is normalized, which means sum of each column is 1.
+	mat = t(apply(mat, 2, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
+
+
 	n = nrow(mat)
 
 	rank = sapply(1:n, function(x) { sum(cal_single_potential(x, mat)) })
@@ -113,10 +115,10 @@ cal_potential <- function(mat) {
 }
 
 disp_stock_rank <- function(rank) {
-	cap = read.table('../data/sp500_market_cap.table', header=F)	
+	cap = read.table('../resource/sp500_market_cap.table', header=F)	
 	rownames(cap) = paste(cap[,1], '.raw', sep='')	
 
-	sec = read.table('../data/sp_500.sector', sep=',')
+	sec = read.table('../resource/sp_500.sector', sep=',')
 	rownames(sec) = paste(sec[,1], '.raw', sep='')
 
 	ro = order(rank, decreasing=T)
@@ -127,19 +129,19 @@ disp_stock_rank <- function(rank) {
 ### Read compressed data, but it's still non-efficienct.
 read_compress_data <-function(fd, fm) {
 	cd = read.table('../data/all_comps_thresh_0.compress', header=F)
-	cname = colnames(read.table('../data/company.list', header=T))
+	cname = colnames(read.table('../resource/company.list', header=T))
 
 	mat = matrix(0, length(cname), length(cname))
 	mat = apply(cd, 1, function(x) { mat[x[1], x[2]] = x[3]}) 
 }
 
 #####
-run <- function() {
-	epf = '../data/sp_128'
+run <- function(epf) {
+	#epf = '../data/sp_128'
 	sink(paste(epf, '.log', sep=''))
 
 	mat = build_graph(paste(epf, '.data', sep=''), 0)
-	write.table(mat, file=paste(epf, '_comps_thresh_0.data', sep=''), row.names=T, col.names=T)
+	write.table(mat, file=paste(epf, '_comps_thresh_0.mat', sep=''), row.names=T, col.names=T)
 
 	#### Pagerank Model #####
 	rank = page_rank(mat)
@@ -171,4 +173,8 @@ run <- function() {
 }
 
 ####
-
+args <- commandArgs(TRUE)
+#epf = '../data/sp_128'
+#print(args)
+print(args)
+run(args[1])

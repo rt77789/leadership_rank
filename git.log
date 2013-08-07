@@ -1,5 +1,5 @@
 
-1. relative return may cause divide 0 problem, be careful.
+1. add evolute_plot.R and run.pl.
 2. to do: what about relative return time series correlation?
 3. to do: group/sector analysis.
 

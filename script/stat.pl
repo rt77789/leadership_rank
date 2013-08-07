@@ -103,6 +103,46 @@ sub count_industry {
     print "total industry_num=$industry_num\n";
 }
 
+### Generate evoluting data of sp500. ###
+sub gen_sp500_evoluting {
+	my %comps;
+	for my $file (sort `ls ../data/sp500_128_20*.data`) {
+		chomp($file);
+
+		print STDERR "start $file...\n";
+		$file =~ s{\.data$}{}isg;
+		#
+		open RF, "<${file}_comps_thresh_0.crank" or die "open ${file}_comps_thresh_0.crank failed...\n";
+		$file =~ s{.+_(.+?)_(.+?)$}{$1_$2}is;
+		while(<RF>) {
+			my @tk = split/\s+/;
+			$comps{$file}->{$tk[0]} = $tk[1];
+		}
+		close RF;
+	}
+
+	my %cc;
+	my @cc;
+	for my $d (sort keys %comps) {
+		for $c (sort keys %{$comps{$d}}) {
+			$cc{$c}++;
+			push @cc, $c if $cc{$c} == keys %comps;
+		}
+	}
+
+	for my $c (@cc) {
+		print "$c", $c eq $cc[-1] ? "\n" : " ";
+	}
+
+	for my $d (sort keys %comps) {
+		print "\"$d\" ";
+		for $c (@cc) {
+			print "$comps{$d}->{$c}", $c eq $cc[-1] ? "\n" : " ";
+		}
+	}
+}
+
 #&get_nonexist_file;
 
-&count_industry;
+#&count_industry;
+&gen_sp500_evoluting;

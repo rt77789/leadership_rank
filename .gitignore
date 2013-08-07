@@ -1,3 +1,4 @@
 data/hist_price/*
+resource/hist_price/*
 data/data/all_comps_thresh_0.*
 script/.*.swp
