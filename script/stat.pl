@@ -183,9 +183,48 @@ sub cal_sp500_mean_rank {
     }
 }
 
+sub trim {
+    my $res = $_[0];
+    $res =~ s{^\s*}{}is;
+    $res =~ s{\s*$}{}is;
+    $res;
+}
 
+sub gen_sp500_sector {
+	my %sec;
+
+    print "date,sector,value,model\n";
+	for my $file (sort `ls ../data/sp500_128_20*.data`) {
+		chomp($file);
+		$file =~ s{\.data$}{}isg;
+		open RF, "<${file}.log" or die "open ${file}.log failed...\n";
+        <RF>; <RF>;
+		$file =~ s{.+_(.+?)_(.+?)$}{$1_$2}is;
+        for my $m (1..4) {
+            <RF>;
+            for (1..5) {
+                my $ts = <RF>;
+                my $tv = <RF>;
+                chomp($ts);
+                chomp($tv);
+
+                my $len = length("Telecommunications Services");
+                my $sn1 = &trim(substr($ts, 0, $len));
+                my $sv1 = &trim(substr($tv, 0, $len));
+                my $sn2 = &trim(substr($ts, $len));
+                my $sv2 = &trim(substr($tv, $len));
+
+                #print "$sn1, $sv1, $sn2, $sv2\n";
+                print "$file,$sn1,$sv1,$m\n";
+                print "$file,$sn2,$sv2,$m\n";
+            }
+        }
+        close RF;
+    }
+}
 #&get_nonexist_file;
 
 #&count_industry;
 #&gen_sp500_evoluting;
-&cal_sp500_mean_rank($ARGV[0], $ARGV[1]);
+#&cal_sp500_mean_rank($ARGV[0], $ARGV[1]);
+&gen_sp500_sector;

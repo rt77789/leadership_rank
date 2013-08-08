@@ -1,5 +1,4 @@
 
-1. sp500_128_2009-02-09_2012-12-21, step = 16, 1000 days' price; mrank, mscore, mcrank, mcscore 4 overall statistics.
-2. add function in stat.pl to calculate above 4 statistics.
-3. to do: what about relative return time series correlation?
+1. add function in stat.pl to generate the sector score.
+2. to do: what about relative return time series correlation?
 
