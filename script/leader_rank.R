@@ -37,7 +37,7 @@ build_graph <- function(fd, threshold = 0.4) {
 
 
 		for(i in 1:col) {
-			print(i)
+			#print(i)
 			for(j in 1:col) {
 				if(var(d[,i]) == 0 || var(d[,j]) == 0) {
 					mat[i,j] = 0
@@ -87,6 +87,7 @@ page_rank <- function(mat, max_error = 1e-6, lambda = 0.85) {
 
 ## Circuit Model.
 cal_single_potential <- function(node, mat, iternum = 50, lambda = 0.85) {
+    #print(node)
 	n = nrow(mat)
 	poten = matrix(0, n, 1)
 	envec = matrix(0, n, 1)

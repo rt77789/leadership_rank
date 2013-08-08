@@ -1,10 +1,10 @@
 
 library(ggplot2)
-d = read.table('../data/sp500_128_2009-03-04_2012-12-21.cevolute')
+d = read.table('../data/sp500_128_2009-02-09_2012-12-21.evolute')
 
 res = matrix(nrow=0, ncol=4)
 
-for(i in 1:3) {
+for(i in 1:6) {
 	tb = matrix(nrow=4, ncol=nrow(d))
 	tb[1,] = rep(colnames(d)[i], nrow(d))
 	tb[2,] = 1:nrow(d)

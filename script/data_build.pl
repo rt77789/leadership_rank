@@ -96,7 +96,7 @@ sub sp500_build_multi {
 	}
     close COM;
 
-	for(my $i = 0; $i+$K-1 < 1000; $i += 64) {
+	for(my $i = 0; $i+$K-1 < 1000; $i += 16) {
 	# we only select the last K days' values.
 		my %com_date;
 		for my $j ($i..($i+$K-1)) {

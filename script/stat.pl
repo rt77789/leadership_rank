@@ -112,7 +112,7 @@ sub gen_sp500_evoluting {
 		print STDERR "start $file...\n";
 		$file =~ s{\.data$}{}isg;
 		#
-		open RF, "<${file}_comps_thresh_0.crank" or die "open ${file}_comps_thresh_0.crank failed...\n";
+		open RF, "<${file}_comps_thresh_0.rank" or die "open ${file}_comps_thresh_0.rank failed...\n";
 		$file =~ s{.+_(.+?)_(.+?)$}{$1_$2}is;
 		while(<RF>) {
 			my @tk = split/\s+/;
@@ -142,7 +142,50 @@ sub gen_sp500_evoluting {
 	}
 }
 
+sub cal_sp500_mean_rank {
+	my %comps;
+    my %cnum;
+    my $mtype = $_[0] eq 'pagerank' ? 'rank' : 'crank';
+
+
+	for my $file (sort `ls ../data/sp500_128_20*.data`) {
+		chomp($file);
+
+		print STDERR "start $file...\n";
+		$file =~ s{\.data$}{}isg;
+		#
+		open RF, "<${file}_comps_thresh_0.$mtype" or die "open ${file}_comps_thresh_0.$mtype failed...\n";
+        my $cr = 1;
+		while(<RF>) {
+			my @tk = split/\s+/;
+            if($_[1] eq 'mrank') {
+                $comps{$tk[0]} += $cr;
+            }
+            else {
+                ## mscore.
+                $comps{$tk[0]} += $tk[1];
+            }
+            $cnum{$tk[0]}++;
+            ++$cr;
+		}
+		close RF;
+    }
+    if($_[1] eq 'mrank') {
+        for my $c (sort {$comps{$a}/$cnum{$a} <=> $comps{$b}/$cnum{$b}} keys %comps) {
+            print "$c ", $comps{$c} / $cnum{$c}, "\n";
+        }
+    }
+    else {
+        ## mscore.
+        for my $c (sort {$comps{$b}/$cnum{$b} <=> $comps{$a}/$cnum{$a}} keys %comps) {
+            print "$c ", $comps{$c} / $cnum{$c}, "\n";
+        }
+    }
+}
+
+
 #&get_nonexist_file;
 
 #&count_industry;
-&gen_sp500_evoluting;
+#&gen_sp500_evoluting;
+&cal_sp500_mean_rank($ARGV[0], $ARGV[1]);
