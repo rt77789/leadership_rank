@@ -1,4 +1,4 @@
 
-1. add script/stationary_check.pl, sp500 200 days data are all stationary.
+1. add script/cal_var_granger.R and cal_index.R.
 2. to do: what about relative return time series correlation?
 

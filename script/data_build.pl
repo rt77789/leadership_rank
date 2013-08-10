@@ -97,7 +97,7 @@ sub sp500_build_multi {
     close COM;
 
     #for(my $i = 0; $i+$K-1 < 200; $i += 1) {
-	for(my $i = 0; $i < 200; $i += 1) {
+	for(my $i = 0; $i < 400; $i += 200) {
 	# we only select the last K days' values.
 		my %com_date;
 		for my $j ($i..($i+$K-1)) {
@@ -147,6 +147,7 @@ sub sp500_build_single {
         close HP;
         
         if(@cp >= $K) {
+			$file =~ s{\.raw$}{}isg;
             $data{$file} = \@cp;
         }
         else {

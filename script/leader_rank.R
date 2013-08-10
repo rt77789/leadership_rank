@@ -117,14 +117,14 @@ cal_potential <- function(mat) {
 
 disp_stock_rank <- function(rank) {
 	cap = read.table('../resource/sp500_market_cap.table', header=F)	
-	rownames(cap) = paste(cap[,1], '.raw', sep='')	
+	rownames(cap) = cap[,1]
 
 	sec = read.table('../resource/sp_500.sector', sep=',')
-	rownames(sec) = paste(sec[,1], '.raw', sep='')
+	rownames(sec) = sec[,1]
 
 	ro = order(rank, decreasing=T)
 	rn = rownames(rank)
-	matrix(c(rn[ro], rank[ro], as.vector(cap[rn[ro], 2]), as.vector(sec[rn[ro], 2])), ncol=4, byrow=F)
+	data.frame(stock=rn[ro], score=rank[ro], cap=as.vector(cap[rn[ro], 2]), sector=as.vector(sec[rn[ro], 2]))
 }
 
 ### Read compressed data, but it's still non-efficienct.
@@ -148,7 +148,7 @@ run <- function(epf) {
 	rank = page_rank(mat)
 	rr = disp_stock_rank(rank)
 
-	write.table(rr, file=paste(epf, '_comps_thresh_0.rank', sep=''), row.names=F, col.names=F, quote=F)
+	write.table(rr, file=paste(epf, '_comps_thresh_0.rank', sep=''), row.names=F, col.names=F, quote=T)
 
 	# Compute the sum influence of each sector.
 	print('Sum influence of each sector in Pagerank Model.')
@@ -161,7 +161,7 @@ run <- function(epf) {
 	rank = cal_potential(mat)
 	rr = disp_stock_rank(rank)
 
-	write.table(rr, file=paste(epf, '_comps_thresh_0.crank', sep=''), row.names=F, col.names=F, quote=F)
+	write.table(rr, file=paste(epf, '_comps_thresh_0.crank', sep=''), row.names=F, col.names=F, quote=T)
 
 	# Compute the sum influence of each sector.
 	print('Sum influence of each sector in Circuit Model.')
