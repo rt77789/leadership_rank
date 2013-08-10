@@ -9,7 +9,7 @@ check_stationary <- function(fn) {
 
 	#ts.plot(x)
 	
-	d = read.table("../data/sp500_128.data", header = T)
+	d = read.table(fn, header = T)
 
 	d = apply(d, 2, function(x) {
 		(x[-1] - x[-length(x)])/x[-length(x)]
