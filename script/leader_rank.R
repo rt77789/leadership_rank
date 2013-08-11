@@ -6,11 +6,11 @@ build_graph <- function(fd, threshold = 0.4) {
 	#dd = read.table('../data/sp500_200.data', header=T)
 	dd = read.table(fd, header=T)
 	piece = 0;
-	lag.max = 14
+
 
 	row = nrow(dd)
 	block = row
-
+	lag.max = row / 2 #14
 	mat2 = matrix(0, nrow = ncol(dd), ncol = ncol(dd))
 
 	ptm = proc.time()
@@ -47,10 +47,15 @@ build_graph <- function(fd, threshold = 0.4) {
 
 					pos = which(res$acf == max(res$acf))[1]
 
-					if(res$lag[pos] < 0 && res$acf[pos] > threshold) {
+					res$acf[res$acf < 0] = 0
+					necc = mean(res$acf[res$lag < 0])
+					pecc = mean(res$acf[res$lag > 0])
+					ecc = max(necc, pecc)
+					#if(res$lag[pos] < 0 && res$acf[pos] > threshold) 
+					if(necc > pecc && ecc > threshold) {
 						### i lead j, and pagerank works at this style.
 						### Make sure the correlation is positive and bigger than the threshold.
-						mat[i,j] = res$acf[pos]
+						mat[i,j] = ecc
 						lags[i,j] = pos - row/2 - 1
 					}
 					else {
@@ -68,6 +73,7 @@ build_graph <- function(fd, threshold = 0.4) {
 
 ### 
 page_rank <- function(mat, max_error = 1e-6, lambda = 0.85) {
+	mat = as.matrix(mat)
 	n = nrow(mat)
 	### Normalize each column, if sum of each row is zero, then leave them as all zeros.
 	#mat = t(apply(mat, 2, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  

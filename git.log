@@ -1,4 +1,4 @@
 
-1. add script/cal_var_granger.R and cal_index.R.
+1. build_graph(), the edge weight is computed by Di's paper.
 2. to do: what about relative return time series correlation?
 
