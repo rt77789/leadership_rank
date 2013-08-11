@@ -106,13 +106,13 @@ sub count_industry {
 ### Generate evoluting data of sp500. ###
 sub gen_sp500_evoluting {
 	my %comps;
-	for my $file (sort `ls ../data/sp500_128_20*.data`) {
+	for my $file (sort `ls ../data/sp500_128_*.data`) {
 		chomp($file);
 
 		print STDERR "start $file...\n";
 		$file =~ s{\.data$}{}isg;
 		#
-		open RF, "<${file}_comps_thresh_0.rank" or die "open ${file}_comps_thresh_0.rank failed...\n";
+		open RF, "<${file}_comps_thresh_0.crank" or die "open ${file}_comps_thresh_0.crank failed...\n";
 		$file =~ s{.+_(.+?)_(.+?)$}{$1_$2}is;
 		while(<RF>) {
 			my @tk = split/\s+/;
@@ -148,7 +148,7 @@ sub cal_sp500_mean_rank {
     my $mtype = $_[0] eq 'pagerank' ? 'rank' : 'crank';
 
 
-	for my $file (sort `ls ../data/sp500_128_20*.data`) {
+	for my $file (sort `ls ../data/sp500_128_*.data`) {
 		chomp($file);
 
 		print STDERR "start $file...\n";
@@ -194,7 +194,7 @@ sub gen_sp500_sector {
 	my %sec;
 
     print "date,sector,value,model\n";
-	for my $file (sort `ls ../data/sp500_128_20*.data`) {
+	for my $file (sort `ls ../data/sp500_128_*.data`) {
 		chomp($file);
 		$file =~ s{\.data$}{}isg;
 		open RF, "<${file}.log" or die "open ${file}.log failed...\n";
@@ -226,5 +226,5 @@ sub gen_sp500_sector {
 
 #&count_industry;
 #&gen_sp500_evoluting;
-#&cal_sp500_mean_rank($ARGV[0], $ARGV[1]);
-&gen_sp500_sector;
+&cal_sp500_mean_rank($ARGV[0], $ARGV[1]);
+#&gen_sp500_sector;
