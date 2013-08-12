@@ -117,7 +117,7 @@ sub sp500_build_single {
     
 	### Read sp 500 company list.
     my %sp500;
-    open LIST, "<../resource/sp_500.list" or die "open ../resource/sp_500.list failed...\n";
+    open LIST, "<../resource/sp500.list" or die "open ../resource/sp500.list failed...\n";
     while(<LIST>) {
         chomp;
         $sp500{"$_.raw"} = 1;
