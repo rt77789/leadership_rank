@@ -2,25 +2,25 @@
 library(ggplot2)
 library('pracma')
 
-cal_index <- function(rr, d, topk) {
+cal_index <- function(rr, rbase, d) {
 		set.seed(1)
 	rr = subset(rr, stock %in% intersect(rr[,1], colnames(d)))
+	rbase = subset(rbase, stock %in% intersect(rbase[,1], colnames(d)))
 	
 	nd = apply(rr, 1, function(x) {
 		d[, x[1]] * as.numeric(x[3])/sum(as.numeric(rr[, 3]))
 	})
 	#ts.plot(apply(nd, 1, sum))
 	
-	pos = 1:topk
-	nd2 = apply(rr[pos, ], 1, function(x) {
-		d[, x[1]] * as.numeric(x[2])/sum(as.numeric(rr[pos, 2]))
+	nd2 = apply(rbase, 1, function(x) {
+		d[, x[1]] * as.numeric(x[2])/sum(as.numeric(rbase[, 2]))
 	})
 	
-	nd3 = apply(rr[pos, ], 1, function(x) {
-		d[, x[1]] * as.numeric(x[3])/sum(as.numeric(rr[pos, 3]))
+	nd3 = apply(rbase, 1, function(x) {
+		d[, x[1]] * as.numeric(x[3])/sum(as.numeric(rbase[, 3]))
 	})
 
-	pos4 = randperm(nrow(rr), length(pos))
+	pos4 = randperm(nrow(rr), nrow(rbase))
 	
 	nd4 = apply(rr[pos4, ], 1, function(x) {
 		d[, x[1]] * as.numeric(x[3])/sum(as.numeric(rr[pos4, 3]))

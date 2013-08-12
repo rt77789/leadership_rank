@@ -3,7 +3,7 @@
 library(ggplot2)
 require(RColorBrewer)
 
-d = read.table('../data/sp500_128_2012-03-07_2012-12-21.msector', header=T, sep=',')
+d = read.table('../data/sp500_128_2012-03-07_2012-12-21.min', header=T, sep=',')
 
 labels = levels(d[,1])
 levels(d[,1]) = 1:length(levels(d[,1]))

@@ -2,19 +2,27 @@
 
 my $page;
 
-open P, "<../data/sp500.page" or die "open ../data/sp500.page failed...\n";
+open P, "<../resource/sp500.page" or die "open ../resource/sp500.page failed...\n";
+open IND, ">../resource/sp500.industry" or die "open ../resource/sp500.industry failed...\n";
+open SEC, ">../resource/sp500.sector" or die "open ../resource/sp500.sector...\n";
 
 while(<P>) {
 	chomp;
 	print "$1\n" if m{Symbol\|(.*?)\}}is;
 	my $com = $1;
 	my @tk = split /\|\|/;
-	if(@tk > 4) {
+	if(@tk > 5) {
 		$tk[3] =~ s{^\s+}{}isg;
 		$tk[3] =~ s{\s+$}{}isg;
-		print STDERR "$com,$tk[3]\n";
+		print SEC "\"$com\",\"$tk[3]\"\n";
+
+		$tk[4] =~ s{^\s+}{}isg;
+		$tk[4] =~ s{\s+$}{}isg;
+		print IND "\"$com\",\"$tk[4]\"\n";
 	}
 }
+close SEC;
+close IND;
 close P;
 
 
