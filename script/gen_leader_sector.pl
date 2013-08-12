@@ -3,7 +3,7 @@
 sub gen_leader_sector {
 	my @date;
 	my $prefix;
-	for my $file (sort `ls ../data/sp500_128_*.data`) {
+	for my $file (sort `ls ../data/sp*.data`) {
 		chomp($file);
 		$file =~ s{\.data$}{}isg;
 		$file =~ m{(.+)_(.+?)_(.+?)$} or die "$file date extract fail.\n";
@@ -19,7 +19,7 @@ sub gen_leader_sector {
 	print SEC "date,sector,value,model\n";
 	print IND "date,industry,value,model\n";
 
-	for my $file (sort `ls ../data/sp500_128_*.data`) {
+	for my $file (sort `ls ../data/sp*.data`) {
 		chomp($file);
 		$file =~ s{\.data$}{}isg;
 		my $date = $file;
