@@ -4,8 +4,8 @@ my %date;
 my $common_stamp = 'common_stamp';
 my $hist_price = 'n15intraday';
 my $max_day = 391;
-my $step_day = 16;
-my $company_list = 'sp500.list';
+my $step_day = 1;
+my $company_list = 'sp100.list';
 
 sub gen_common_data {
 
