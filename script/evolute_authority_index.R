@@ -3,8 +3,11 @@
 library(ggplot2)
 require(RColorBrewer)
 
-d = read.table('../data/sp500_128_1995-09-11_2012-12-21.msector', header=T, sep=',')
+d = read.table('../data/sp100_128_1995-02-15_2012-12-21_step_128/sp100_128_1995-02-15_2012-12-21.msector', header=T, sep=',')
 
+labels = levels(d[,1])
+levels(d[,1]) = 1:length(levels(d[,1]))
+pos = seq(from=1, to=length(labels), by=5)
 d = subset(d, model=='sum_crank')
 
 nd = data.frame(date = 1:length(levels(d$date)), value=sapply(levels(d$date), function(x) { mean(d[which(x == d[,1]), 3]) }))
