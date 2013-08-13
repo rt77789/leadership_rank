@@ -103,45 +103,6 @@ sub count_industry {
     print "total industry_num=$industry_num\n";
 }
 
-### Generate evoluting data of sp500. ###
-sub gen_sp500_evoluting {
-	my %comps;
-	for my $file (sort `ls ../data/sp500_128_*.data`) {
-		chomp($file);
-
-		print STDERR "start $file...\n";
-		$file =~ s{\.data$}{}isg;
-		#
-		open RF, "<${file}_comps_thresh_0.crank" or die "open ${file}_comps_thresh_0.crank failed...\n";
-		$file =~ s{.+_(.+?)_(.+?)$}{$1_$2}is;
-		while(<RF>) {
-			my @tk = split/\s+/;
-			$comps{$file}->{$tk[0]} = $tk[1];
-		}
-		close RF;
-	}
-
-	my %cc;
-	my @cc;
-	for my $d (sort keys %comps) {
-		for $c (sort keys %{$comps{$d}}) {
-			$cc{$c}++;
-			push @cc, $c if $cc{$c} == keys %comps;
-		}
-	}
-
-	for my $c (@cc) {
-		print "$c", $c eq $cc[-1] ? "\n" : " ";
-	}
-
-	for my $d (sort keys %comps) {
-		print "\"$d\" ";
-		for $c (@cc) {
-			print "$comps{$d}->{$c}", $c eq $cc[-1] ? "\n" : " ";
-		}
-	}
-}
-
 sub cal_sp500_mean_rank {
 	my %comps;
     my %cnum;
@@ -190,38 +151,6 @@ sub trim {
     $res;
 }
 
-sub gen_sp500_sector {
-	my %sec;
-
-    print "date,sector,value,model\n";
-	for my $file (sort `ls ../data/sp500_128_*.data`) {
-		chomp($file);
-		$file =~ s{\.data$}{}isg;
-		open RF, "<${file}.log" or die "open ${file}.log failed...\n";
-        <RF>; <RF>;
-		$file =~ s{.+_(.+?)_(.+?)$}{$1_$2}is;
-        for my $m (1..4) {
-            <RF>;
-            for (1..5) {
-                my $ts = <RF>;
-                my $tv = <RF>;
-                chomp($ts);
-                chomp($tv);
-
-                my $len = length("Telecommunications Services");
-                my $sn1 = &trim(substr($ts, 0, $len));
-                my $sv1 = &trim(substr($tv, 0, $len));
-                my $sn2 = &trim(substr($ts, $len));
-                my $sv2 = &trim(substr($tv, $len));
-
-                #print "$sn1, $sv1, $sn2, $sv2\n";
-                print "$file,$sn1,$sv1,$m\n";
-                print "$file,$sn2,$sv2,$m\n";
-            }
-        }
-        close RF;
-    }
-}
 #&get_nonexist_file;
 
 #&count_industry;
