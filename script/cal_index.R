@@ -3,7 +3,7 @@ library(ggplot2)
 library('pracma')
 
 cal_index <- function(rr, rbase, d) {
-		set.seed(1)
+	set.seed(1)
 	rr = subset(rr, stock %in% intersect(rr[,1], colnames(d)))
 	rbase = subset(rbase, stock %in% intersect(rbase[,1], colnames(d)))
 	
