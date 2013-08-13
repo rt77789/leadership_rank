@@ -1,12 +1,17 @@
 #!/usr/bin/perl -w
 
 my %date;
+my $common_stamp = 'common_stamp';
+my $hist_price = 'n15intraday';
+my $max_day = 391;
+my $step_day = 16;
+my $company_list = 'sp500.list';
 
 sub gen_common_data {
 
-    for my $file (`ls ../resource/hist_price`) {
+    for my $file (`ls ../resource/$hist_price`) {
         chomp($file);
-        open HP, "<../resource/hist_price/$file" or die "open ../resource/hist_price/$file failed...";
+        open HP, "<../resource/$hist_price/$file" or die "open ../resource/$hist_price/$file failed...";
         my @cp;
         <HP>;
         while(<HP>) {
@@ -28,14 +33,14 @@ sub gen_common_data {
     for (keys %date) {
         push @resd, $_ if $date{$_} > $md;
     }
-    open COM, ">../resource/common_date.info" or die "open ../resource/common_date.info failed..\n";
+    open COM, ">../resource/${common_stamp}.info" or die "open ../resource/${common_stamp}.info failed..\n";
     print COM "$_, $md\n" for reverse sort @resd;
     close COM;
 }
 
 sub data_build {
     ### read common date.
-    open COM, "<../resource/common_date.info" or die "open ../resource/common_date.info failed...\n";
+    open COM, "<../resource/${common_stamp}.info" or die "open ../resource/${common_stamp}.info failed...\n";
     my %com_date;
     my $K = 128;
     my $cn = 0;
@@ -52,9 +57,9 @@ sub data_build {
 
     #### 
     my %data;
-    for my $file (`ls ../resource/hist_price`) {
+    for my $file (`ls ../resource/$hist_price`) {
         chomp($file);
-        open HP, "<../resource/hist_price/$file" or die "open ../resource/hist_price/$file failed...";
+        open HP, "<../resource/$hist_price/$file" or die "open ../resource/$hist_price/$file failed...";
         my @cp;
         <HP>;
         while(<HP>) {
@@ -88,7 +93,7 @@ sub data_build {
 
 sub sp500_build_multi {
 ### read common date.
-    open COM, "<../resource/common_date.info" or die "open ../resource/common_date.info failed...\n";
+    open COM, "<../resource/${common_stamp}.info" or die "open ../resource/${common_stamp}.info failed...\n";
     my $K = 128;
 	while(<COM>) {
 		chomp;
@@ -97,7 +102,7 @@ sub sp500_build_multi {
     close COM;
 
     #for(my $i = 0; $i+$K-1 < 200; $i += 1) {
-	for(my $i = 0; $i < 500; $i += 128) {
+	for(my $i = 0; $i+$K-1 < $max_day; $i += $step_day) {
 	# we only select the last K days' values.
 		my %com_date;
 		for my $j ($i..($i+$K-1)) {
@@ -117,21 +122,23 @@ sub sp500_build_single {
     
 	### Read sp 500 company list.
     my %sp500;
-    open LIST, "<../resource/sp500.list" or die "open ../resource/sp500.list failed...\n";
+    open LIST, "<../resource/${company_list}" or die "open ../resource/${company_list} failed...\n";
     while(<LIST>) {
         chomp;
-        $sp500{"$_.raw"} = 1;
+        $sp500{"$_"} = 1;
     }
     close LIST;
 
     #### 
     my %data;
-    for my $file (`ls ../resource/hist_price`) {
+    for my $file (`ls ../resource/$hist_price`) {
         chomp($file);
+		my $dn = $file;
+		$dn =~ s{\..*?$}{}is;
         ## only select sp500 companies.
-        next unless defined $sp500{$file};
+        next unless defined $sp500{$dn};
 
-        open HP, "<../resource/hist_price/$file" or die "open ../resource/hist_price/$file failed...";
+        open HP, "<../resource/$hist_price/$file" or die "open ../resource/$hist_price/$file failed...";
         my @cp;
         <HP>;
         while(<HP>) {
@@ -156,7 +163,11 @@ sub sp500_build_single {
     }
 
     ### Print the data.
-    print OF "$_ " for sort keys %data;
+	#print OF "$_ " for sort keys %data;
+	for my $k (sort keys %data) {
+		$k =~ s{\..*?$}{}isg;
+		print OF "$k ";
+	}
     print OF "\n";
     for my $i (0..($K-1)) {
         print OF "$data{$_}->[$K-1-$i] " for sort keys %data;
@@ -166,7 +177,7 @@ sub sp500_build_single {
 }
 sub sp100_build_multi {
 ### read common date.
-    open COM, "<../resource/common_date.info" or die "open ../resource/common_date.info failed...\n";
+    open COM, "<../resource/${common_stamp}.info" or die "open ../resource/${common_stamp}.info failed...\n";
     my $K = 128;
 	while(<COM>) {
 		chomp;
@@ -246,6 +257,6 @@ sub sp100_build_single {
 
 #&gen_common_data;
 #&data_build;
-#&sp500_build_multi;
-&sp100_build_multi;
+&sp500_build_multi;
+#&sp100_build_multi;
 

@@ -2,7 +2,7 @@
 library(ggplot2)
 require(RColorBrewer)
 
-d = read.table('../data/sp500_128_1995-09-12_2012-12-21.evolute')
+d = read.table('../data/sp100_128_1995-02-15_2012-12-21_step_128/sp100_128_1995-02-15_2012-12-21.evolute')
 
 res = matrix(nrow=0, ncol=4)
 cbPalette <- brewer.pal( 6 , "Accent" )
