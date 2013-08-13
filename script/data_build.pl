@@ -122,10 +122,10 @@ sub sp500_build_single {
     
 	### Read sp 500 company list.
     my %sp500;
-    open LIST, "<../resource/sp500.list" or die "open ../resource/sp500.list failed...\n";
+    open LIST, "<../resource/${company_list}" or die "open ../resource/${company_list} failed...\n";
     while(<LIST>) {
         chomp;
-        $sp500{"$_.raw"} = 1;
+        $sp500{"$_"} = 1;
     }
     close LIST;
 
@@ -133,8 +133,10 @@ sub sp500_build_single {
     my %data;
     for my $file (`ls ../resource/$hist_price`) {
         chomp($file);
+		my $dn = $file;
+		$dn =~ s{\..*?$}{}is;
         ## only select sp500 companies.
-        next unless defined $sp500{$file};
+        next unless defined $sp500{$dn};
 
         open HP, "<../resource/$hist_price/$file" or die "open ../resource/$hist_price/$file failed...";
         my @cp;
@@ -161,7 +163,11 @@ sub sp500_build_single {
     }
 
     ### Print the data.
-    print OF "$_ " for sort keys %data;
+	#print OF "$_ " for sort keys %data;
+	for my $k (sort keys %data) {
+		$k =~ s{\..*?$}{}isg;
+		print OF "$k ";
+	}
     print OF "\n";
     for my $i (0..($K-1)) {
         print OF "$data{$_}->[$K-1-$i] " for sort keys %data;
@@ -171,7 +177,7 @@ sub sp500_build_single {
 }
 sub sp100_build_multi {
 ### read common date.
-    open COM, "<../resource/common_date.info" or die "open ../resource/common_date.info failed...\n";
+    open COM, "<../resource/${common_stamp}.info" or die "open ../resource/${common_stamp}.info failed...\n";
     my $K = 128;
 	while(<COM>) {
 		chomp;
@@ -251,6 +257,6 @@ sub sp100_build_single {
 
 #&gen_common_data;
 #&data_build;
-#&sp500_build_multi;
-&sp100_build_multi;
+&sp500_build_multi;
+#&sp100_build_multi;
 

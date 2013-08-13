@@ -2,6 +2,7 @@
 
 my $of = $ARGV[0];
 die "please input a name of directory.\n" unless defined $of;
+$of = "../data/$of";
 my @suf = (
     'data',
     'mat',
@@ -18,9 +19,9 @@ my @suf = (
     'cevolute'
 );
 
-`mkdir ../data/$of` unless -d "../data/$of";
+`mkdir $of` unless -d $of;
 
 if(-d $of) {
     #print "mv ../data/*.$_ $of\n" for @suf;
-    `mv ../data/*.$_ ../data/$of` for @suf;
+    `mv ../data/*.$_ $of` for @suf;
 }
