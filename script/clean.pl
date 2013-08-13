@@ -20,7 +20,7 @@ my @suf = (
 
 `mkdir ../data/$of` unless -d "../data/$of";
 
-if(-d $of) {
-    #print "mv ../data/*.$_ $of\n" for @suf;
+if(-d "../data/$of") {
+    #print "mv ../data/*.$_ ../data/$of\n" for @suf;
     `mv ../data/*.$_ ../data/$of` for @suf;
 }
