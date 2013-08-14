@@ -1,4 +1,5 @@
 
-1. add ../resource/config.file, Configer.pm, gen_intraday_matrix.pl
-2. to do: what about relative return time series correlation?
+1. refactor cal_index.R, 
+2. to do: tune the parameters, thresholds etc.
+3. to do: what about relative return time series correlation?
 

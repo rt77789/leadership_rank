@@ -88,7 +88,7 @@ sub sp500_build_multi {
 	my @stamp = sort keys %stamp;
 	#Configer::disp_array(\@stamp);
 
-	for(my $i = 0; $i+$config{'window_size'}-1 < $config{'max_day'}; $i += $config{'step_day'}) {
+	for(my $i = 0; $i + $config{'window_size'} - 1 < $config{'max_day'}; $i += $config{'step_day'}) {
 	# we only select the last K days' values.
 		my %com_date;
 		for my $j ($i..($i+$config{'window_size'}-1)) {

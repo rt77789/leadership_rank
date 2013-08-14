@@ -8,12 +8,20 @@ use warnings;
 
 my %config = &init;
 
+sub trim {
+	my $res = $_[0];
+	$res =~ s{^\s+}{}isg;
+	$res =~ s{\s+$}{}isg;
+	$res
+}
+
 sub init { 
 	my $conf_dir = '../resource/config.file';
 	open C, "<$conf_dir" or die "open $conf_dir...\n";
 	while(<C>) {
 		chomp;
-		my @tk = split /=/;
+		my @tk = split /,/;
+		@tk = map { &trim($_) } @tk;
 		$config{$tk[0]} = $tk[1];
 	}
 	close C;

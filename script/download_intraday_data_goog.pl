@@ -1,10 +1,12 @@
 #!/usr/bin/perl -w
 
+use Configer;
 use LWP;
 
+my %config = Configer::init;
 # Data between [from, to] are extracted.
-my $from = 1374586200;
-my $to = 1374609600;
+my $from = $config{'start_stamp'}; #1374586200;
+my $to = $config{'end_stamp'}; #1374609600;
 
 my %tickers;
 ### Read stock tickers list that needs to be downloaded.
