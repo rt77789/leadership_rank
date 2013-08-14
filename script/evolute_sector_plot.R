@@ -5,7 +5,7 @@ library(vars)
 library("fUnitRoots")
 require(RColorBrewer)
 
-d = read.table("../data/sp100_128_1374586260_1374609600_step_1/sp500_128_1374586260_1374609600.msector", header = T, 
+d = read.table("../data/sp500_128_1374587160_1374609180.msector", header = T, 
 	sep = ",")
 
 labels = levels(d[, 1])

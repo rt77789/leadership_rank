@@ -2,6 +2,10 @@
 
 use LWP;
 
+# Data between [from, to] are extracted.
+my $from = 1374586200;
+my $to = 1374609600;
+
 my %tickers;
 ### Read stock tickers list that needs to be downloaded.
 sub read_tickers {
@@ -73,8 +77,8 @@ sub parse_data {
 
 		open TO, ">$rd/$ti.n15intraday" or die "open $rd/$ti.n15intraday failed...\n";
 		print TO "timestamp,open,high,low,close,volume\n";
-		for my $k (sort { $a <=> $b} keys %dd) {
-			print TO "$k,", join(",", @{$dd{$k}}), "\n";
+		for my $k (sort { $a <=> $b } keys %dd) {
+			print TO "$k,", join(",", @{$dd{$k}}), "\n" if $k >= $from and $to >= $k;
 		}
 		close TO;
 	}

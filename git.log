@@ -1,4 +1,4 @@
 
-1. print more information in mrank/mcrank/mscore/mcscore files.
+1. add ../resource/config.file, Configer.pm, gen_intraday_matrix.pl
 2. to do: what about relative return time series correlation?
 

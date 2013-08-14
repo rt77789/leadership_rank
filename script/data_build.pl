@@ -1,17 +1,20 @@
 #!/usr/bin/perl -w
 
-my %date;
-my $common_stamp = 'common_stamp';
-my $hist_price = 'n15intraday';
-my $max_day = 391;
-my $step_day = 1;
-my $company_list = 'sp100.list';
+use Configer;
 
+my %date;
+my %config = Configer::init;
+#my $common_stamp = 'common_stamp';
+#my $hist_price = 'n15intraday';
+#my $max_day = 391;
+#my $step_day = 1;
+#my $company_list = 'sp100.list';
+#
 sub gen_common_data {
 
-    for my $file (`ls ../resource/$hist_price`) {
+    for my $file (`ls ../resource/$config{'hist_price'}`) {
         chomp($file);
-        open HP, "<../resource/$hist_price/$file" or die "open ../resource/$hist_price/$file failed...";
+        open HP, "<../resource/$config{'hist_price'}/$file" or die "open ../resource/$config{'hist_price'}/$file failed...";
         my @cp;
         <HP>;
         while(<HP>) {
@@ -33,33 +36,21 @@ sub gen_common_data {
     for (keys %date) {
         push @resd, $_ if $date{$_} > $md;
     }
-    open COM, ">../resource/${common_stamp}.info" or die "open ../resource/${common_stamp}.info failed..\n";
+    open COM, ">../resource/$config{'common_stamp'}.info" or die "open ../resource/$config{'common_stamp'}.info failed..\n";
     print COM "$_, $md\n" for reverse sort @resd;
     close COM;
 }
 
 sub data_build {
     ### read common date.
-    open COM, "<../resource/${common_stamp}.info" or die "open ../resource/${common_stamp}.info failed...\n";
-    my %com_date;
-    my $K = 128;
+    my %com_date = Configer::load_common_stamp;
     my $cn = 0;
-    while(<COM>) {
-        chomp;
-        s{,.*$}{}isg;
-        print STDERR "$_\n";
-        $com_date{$_} = 1;
-        $cn++;
-        # we only select the last K days' values.
-        last if $cn >= $K;
-    }
-    close COM;
 
-    #### 
+        #### 
     my %data;
-    for my $file (`ls ../resource/$hist_price`) {
+    for my $file (`ls ../resource/$config{'hist_price'}`) {
         chomp($file);
-        open HP, "<../resource/$hist_price/$file" or die "open ../resource/$hist_price/$file failed...";
+        open HP, "<../resource/$config{'hist_price'}/$file" or die "open ../resource/$config{'hist_price'}/$file failed...";
         my @cp;
         <HP>;
         while(<HP>) {
@@ -70,45 +61,40 @@ sub data_build {
             print STDERR "$tk[0], $tk[4], $file\n";
 
             push @cp, $tk[4];
-            last if @cp == $K;
+            last if @cp == $config{'window_size'};
         }
         close HP;
         
-        if(@cp >= $K) {
+        if(@cp >= $config{'window_size'}) {
             $data{$file} = \@cp;
         }
         else {
-            print STDERR $#cp+1, ", $K, $file\n";
+            print STDERR $#cp+1, ", $config{'window_size'}, $file\n";
         }
     }
 
     ### Print the data.
     print "$_ " for sort keys %data;
     print "\n";
-    for my $i (0..($K-1)) {
-        print "$data{$_}->[$K-1-$i] " for sort keys %data;
+    for my $i (0..($config{'window_size'}-1)) {
+        print "$data{$_}->[$config{'window_size'}-1-$i] " for sort keys %data;
         print "\n";
     }
 }
 
 sub sp500_build_multi {
 ### read common date.
-    open COM, "<../resource/${common_stamp}.info" or die "open ../resource/${common_stamp}.info failed...\n";
-    my $K = 128;
-	while(<COM>) {
-		chomp;
-		push @stamp, $_;
-	}
-    close COM;
+	my %stamp = Configer::load_common_stamp;
+	my @stamp = sort keys %stamp;
+	#Configer::disp_array(\@stamp);
 
-    #for(my $i = 0; $i+$K-1 < 200; $i += 1) {
-	for(my $i = 0; $i+$K-1 < $max_day; $i += $step_day) {
+	for(my $i = 0; $i+$config{'window_size'}-1 < $config{'max_day'}; $i += $config{'step_day'}) {
 	# we only select the last K days' values.
 		my %com_date;
-		for my $j ($i..($i+$K-1)) {
+		for my $j ($i..($i+$config{'window_size'}-1)) {
 			$com_date{$stamp[$j]} = 1;
 		}
-		&sp500_build_single(\%com_date, "../data/sp500_128_$stamp[$i]_$stamp[$i+$K-1].data");
+		&sp500_build_single(\%com_date, "../data/sp500_128_$stamp[$i]_$stamp[$i+$config{'window_size'}-1].data");
 	}
 }
 
@@ -121,24 +107,17 @@ sub sp500_build_single {
 	open OF, ">$of" or die "open $of failed...\n";
     
 	### Read sp 500 company list.
-    my %sp500;
-    open LIST, "<../resource/${company_list}" or die "open ../resource/${company_list} failed...\n";
-    while(<LIST>) {
-        chomp;
-        $sp500{"$_"} = 1;
-    }
-    close LIST;
-
-    #### 
+    my %sp500 = Configer::load_company_list;
     my %data;
-    for my $file (`ls ../resource/$hist_price`) {
+
+    for my $file (`ls ../resource/$config{'hist_price'}`) {
         chomp($file);
 		my $dn = $file;
 		$dn =~ s{\..*?$}{}is;
         ## only select sp500 companies.
         next unless defined $sp500{$dn};
 
-        open HP, "<../resource/$hist_price/$file" or die "open ../resource/$hist_price/$file failed...";
+        open HP, "<../resource/$config{'hist_price'}/$file" or die "open ../resource/$config{'hist_price'}/$file failed...";
         my @cp;
         <HP>;
         while(<HP>) {
@@ -170,15 +149,18 @@ sub sp500_build_single {
 	}
     print OF "\n";
     for my $i (0..($K-1)) {
-        print OF "$data{$_}->[$K-1-$i] " for sort keys %data;
+		#print OF "$data{$_}->[$K-1-$i] " for sort keys %data;
+		# ascent order.
+        print OF "$data{$_}->[$i] " for sort keys %data;
         print OF "\n";
     }
 	close OF;
 }
+
 sub sp100_build_multi {
 ### read common date.
-    open COM, "<../resource/${common_stamp}.info" or die "open ../resource/${common_stamp}.info failed...\n";
-    my $K = 128;
+    open COM, "<../resource/$config{'common_stamp'}.info" or die "open ../resource/$config{'common_stamp'}.info failed...\n";
+	my $K = $config{'window_size'};
 	while(<COM>) {
 		chomp;
 		push @stamp, $_;
@@ -197,7 +179,6 @@ sub sp100_build_multi {
 }
 
 sub sp100_build_single {
-
     my %com_date = %{$_[0]};
 	my $of = $_[1];
 	my $K = keys %com_date;
@@ -215,12 +196,12 @@ sub sp100_build_single {
 
     #### 
     my %data;
-    for my $file (`ls ../resource/hist_price`) {
+    for my $file (`ls ../resource/$config{'hist_price'}`) {
         chomp($file);
         ## only select sp100 companies.
         next unless defined $sp100{$file};
 
-        open HP, "<../resource/hist_price/$file" or die "open ../resource/hist_price/$file failed...";
+        open HP, "<../resource/$config{'hist_price'}/$file" or die "open ../resource/$config{'hist_price'}/$file failed...";
         my @cp;
         <HP>;
         while(<HP>) {
@@ -253,7 +234,6 @@ sub sp100_build_single {
     }
 	close OF;
 }
-
 
 #&gen_common_data;
 #&data_build;

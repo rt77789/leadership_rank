@@ -2,7 +2,7 @@
 library(ggplot2)
 require(RColorBrewer)
 
-d = read.table('../data/sp100_128_1374586260_1374609600_step_1/sp500_128_1374586260_1374609600.cevolute')
+d = read.table('../data/sp500_128_1374587160_1374609180.cevolute')
 
 res = matrix(nrow=0, ncol=4)
 cbPalette <- brewer.pal( 6 , "Accent" )
@@ -21,7 +21,7 @@ res = data.frame(Stock = res[,1], x = as.numeric(res[,2]), y = as.numeric(res[,3
 
 labels = levels(res$date)
 levels(res$date) = 1:length(levels(res$date))
-pos = seq(from=1, to=length(labels), by=10)
+pos = seq(from=1, to=length(labels), by=1)
 
 ggplot(res) + geom_point(aes(x=date, y=y, group=Stock, color=factor(Stock), shape=factor(Stock))) + geom_line(aes(x=date, y=y, group=Stock, color=factor(Stock))) + scale_x_discrete(breaks=c(pos), labels=c(labels[pos])) + theme(axis.text.y = element_text(size = rel(1),  angle = 60), axis.text.x = element_text(size = rel(0.5), angle = 45), legend.position = "right", axis.title.x = element_blank(), 
 		axis.title.y = element_blank()) + scale_colour_manual(values=cbPalette)
