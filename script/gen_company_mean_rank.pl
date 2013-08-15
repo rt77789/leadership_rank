@@ -10,11 +10,11 @@ sub gen_campany_mean_rank {
     my $mtype = $_[0] eq 'pagerank' ? 'rank' : 'crank';
     my $ofile = $_[2];
 
-	for my $file (sort `ls ../data/sp*.data`) {
+	for my $file (sort `ls ../data/sp*.log`) {
 		chomp($file);
 
 		print STDERR "start $file...\n";
-		$file =~ s{\.data$}{}isg;
+		$file =~ s{\.log$}{}isg;
 		#
 		open RF, "<${file}_comps_thresh_0.$mtype" or die "open ${file}_comps_thresh_0.$mtype failed...\n";
         my $cr = 1;
@@ -57,9 +57,9 @@ sub gen_campany_mean_rank {
 sub main {
 my @date;
 	my $prefix;
-	for my $file (sort `ls ../data/sp*.data`) {
+	for my $file (sort `ls ../data/sp*.log`) {
 		chomp($file);
-		$file =~ s{\.data$}{}isg;
+		$file =~ s{\.log$}{}isg;
 		$file =~ m{(.+)_(.+?)_(.+?)$} or die "$file date extract fail.\n";
 		push @date, $2, $3;
 		$prefix = $1;

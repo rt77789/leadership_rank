@@ -5,9 +5,9 @@
 sub gen_company_evolute {
     my @date;
 	my $prefix;
-	for my $file (sort `ls ../data/sp*.data`) {
+	for my $file (sort `ls ../data/sp*.log`) {
 		chomp($file);
-		$file =~ s{\.data$}{}isg;
+		$file =~ s{\.log$}{}isg;
 		$file =~ m{(.+)_(.+?)_(.+?)$} or die "$file date extract fail.\n";
 		push @date, $2, $3;
 		$prefix = $1;
@@ -20,11 +20,11 @@ sub gen_company_evolute {
         open EVO, ">${prefix}_$date[1]_$date[-1].$osuf[$i]" or die "${prefix}_$date[1]_$date[-1].$osuf[$i] failed...\n";
 
         my %comps;
-        for my $file (sort `ls ../data/sp*.data`) {
+        for my $file (sort `ls ../data/sp*.log`) {
             chomp($file);
 
             print STDERR "start $file...\n";
-            $file =~ s{\.data$}{}isg;
+            $file =~ s{\.log$}{}isg;
             #
             open RF, "<${file}_comps_thresh_0.$suf[$i] " or die "open ${file}_comps_thresh_0.$suf[$i] failed...\n";
             $file =~ s{.+_(.+?)_(.+?)$}{$1_$2}is;
