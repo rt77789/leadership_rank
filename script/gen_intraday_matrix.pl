@@ -51,7 +51,7 @@ sub gen_inraday_matrix {
 		}
 
 		### Non filter data are used.
-		if($pnum <= $config{'max_day'}) {
+		if($pnum == $config{'max_day'}) {
 			for my $st (sort keys %data) {
 				$resd{$st}->{$file} = $data{$st}->{$file};
 			}
@@ -78,7 +78,6 @@ sub gen_inraday_matrix {
 		print OF "\n";
 	}
 	close OF;
-
 }
 
 #Configer::disp_hash(\%config);

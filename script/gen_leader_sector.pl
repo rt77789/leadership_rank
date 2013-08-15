@@ -13,8 +13,8 @@ sub gen_leader_sector {
 
 	@date = sort @date;
 
-	open SEC, ">${prefix}_$date[1]_$date[-1].msector" or die "${prefix}_$date[1]_$date[-1].msector failed...\n";
-	open IND, ">${prefix}_$date[1]_$date[-1].mindustry" or die "${prefix}_$date[1]_$date[-1].mindustry failed...\n";
+	open SEC, ">${prefix}_$date[0]_$date[-1].msector" or die "${prefix}_$date[0]_$date[-1].msector failed...\n";
+	open IND, ">${prefix}_$date[0]_$date[-1].mindustry" or die "${prefix}_$date[0]_$date[-1].mindustry failed...\n";
 
 	print SEC "date,sector,value,model\n";
 	print IND "date,industry,value,model\n";

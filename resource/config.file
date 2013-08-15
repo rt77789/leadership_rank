@@ -3,7 +3,7 @@ hist_price,n15intraday
 max_day,391
 step_day,1
 company_list,sp100.list
-file_prefix,sp500_128_
+file_prefix,sp100_128_
 window_size,128
 start_stamp,1374586200
 end_stamp,1374609600

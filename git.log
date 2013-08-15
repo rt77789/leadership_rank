@@ -1,5 +1,5 @@
 
-1. refactor cal_index.R, 
+1. add gen_window_data.pl
 2. to do: tune the parameters, thresholds etc.
 3. to do: what about relative return time series correlation?
 

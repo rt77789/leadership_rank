@@ -2,11 +2,17 @@
 library(ggplot2)
 library('pracma')
 
+config = read.table('../resource/config.file', header=F, sep=',')
+rownames(config) = config[,1]
+config[,2] = as.vector(config[,2])
+
 cal_index <- function() {
-		# ggplot(res) + geom_line(aes(x, y, group = factor(stock), color= factor(stock))) + geom_point(aes(x, y, group = factor(stock), color= factor(stock), shape=factor(stock)))
+		from = as.numeric(config['start_stamp', 2])
+		to = as.numeric(config['end_stamp', 2])
+		rawfile = paste('../data/', config['file_prefix', 2], from, '_', to, '.raw', sep='')
 		
 		leader.index = cal_leader_index(0)
-		sp500.index = cal_sp500_index('../data/sp500_1374586200_1374609600.raw', '../resource/sp500_market_cap.table')
+		sp500.index = cal_sp500_index(rawfile, '../resource/sp500_market_cap.table')
 		
 		leader.index = (leader.index - mean(leader.index)) / sd(leader.index)
 		sp500.index = (sp500.index - mean(sp500.index)) / sd(sp500.index)
@@ -31,10 +37,7 @@ cal_sp500_index <- function(rawfile, capfile) {
 
 cal_leader_index <- function(topk = 0) {
 	
-	config = read.table('../resource/config.file', header=F, sep=',')
-	rownames(config) = config[,1]
-	# sp500_128_1374592920_1374600540.data
-	config[,2] = as.vector(config[,2])
+	
 	
 	from = as.numeric(config['start_stamp', 2])
 	to = as.numeric(config['end_stamp', 2]) - as.numeric(config['step_seconds', 2]) * (as.numeric(config['window_size', 2]) - 1)
@@ -55,14 +58,14 @@ cal_leader_index <- function(topk = 0) {
 	
 	leader.index = matrix(0, nrow=as.numeric(config['window_size', 2]), ncol=length(data.list))
 	for(i in 1:length(data.list)) {
-		rr = read.table(rank.list[10], header=F, col.names=c('stock', 'value', 'cap', 'sector', 'industry'))
+		rr = read.table(rank.list[i], header=F, col.names=c('stock', 'value', 'cap', 'sector', 'industry'))
 		data = read.table(data.list[i], header=T)
 		
 		rr = subset(rr, stock %in% intersect(rr[,1], colnames(data)))
 		if(topk > 0) rr = rr[1:topk, ]
 		
 		leader.index[, i] = apply(apply(rr, 1, function(x) {
-			data[, x[1]] * as.numeric(x[2])/sum(as.numeric(rr[, 2]))
+			data[, x[1]] * as.numeric(x[3])/sum(as.numeric(rr[, 3]))
 		}), 1, sum)
 	}
 	

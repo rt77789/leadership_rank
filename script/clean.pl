@@ -16,7 +16,8 @@ my @suf = (
     'msector',
     'mindustry',
     'evolute',
-    'cevolute'
+    'cevolute',
+	'raw'
 );
 
 `mkdir $of` unless -d $of;

@@ -157,86 +157,39 @@ sub sp500_build_single {
 	close OF;
 }
 
-sub sp100_build_multi {
-### read common date.
-    open COM, "<../resource/$config{'common_stamp'}.info" or die "open ../resource/$config{'common_stamp'}.info failed...\n";
-	my $K = $config{'window_size'};
-	while(<COM>) {
-		chomp;
-		push @stamp, $_;
-	}
-    close COM;
+sub gen_window_data {
+	for my $file(`ls ../data/*.raw`) {
+		chomp $file;
+		#print "$file\n";
 
-    #for(my $i = 0; $i+$K-1 < 200; $i += 1) {
-	for(my $i = 0; $i < 4400; $i += 64) {
-	# we only select the last K days' values.
-		my %com_date;
-		for my $j ($i..($i+$K-1)) {
-			$com_date{$stamp[$j]} = 1;
+		open IN, "<$file" or die "open $file failed...\n";
+		my $cname = <IN>;
+		$cname =~ s{\s+$}{}isg;
+		my @cname = split /\s+/, $cname;
+		my @window_data;
+		my @stamps;
+
+		while(<IN>) {
+			chomp;
+			s{\s+$}{}isg;
+			my @v = split /\s+/;
+			push @stamps, shift @v;
+			push @window_data, \@v;
 		}
-		&sp100_build_single(\%com_date, "../data/sp100_128_$stamp[$i]_$stamp[$i+$K-1].data");
+		close IN;
+
+		for(my $i = $config{'window_size'}-1; $i < @window_data; $i += $config{'step_day'}) {
+			my $from = ($i-$config{'window_size'}+1);
+			my $to = $i;
+			open OUT, ">../data/$config{'file_prefix'}$stamps[$from]_$stamps[$to].data" or die "open ../data/$config{'file_prefix'}$stamps[$from]_$stamps[$to].data failed...\n";	
+			print OUT (join(' ', @cname), "\n");
+			print OUT (join(' ', @{$_}), "\n")  for @window_data[$from..$to];
+			close OUT;
+		}
 	}
-}
-
-sub sp100_build_single {
-    my %com_date = %{$_[0]};
-	my $of = $_[1];
-	my $K = keys %com_date;
-
-	open OF, ">$of" or die "open $of failed...\n";
-    
-	### Read sp 100 company list.
-    my %sp100;
-    open LIST, "<../resource/sp100.list" or die "open ../resource/sp100.list failed...\n";
-    while(<LIST>) {
-        chomp;
-        $sp100{"$_.raw"} = 1;
-    }
-    close LIST;
-
-    #### 
-    my %data;
-    for my $file (`ls ../resource/$config{'hist_price'}`) {
-        chomp($file);
-        ## only select sp100 companies.
-        next unless defined $sp100{$file};
-
-        open HP, "<../resource/$config{'hist_price'}/$file" or die "open ../resource/$config{'hist_price'}/$file failed...";
-        my @cp;
-        <HP>;
-        while(<HP>) {
-            chomp;
-            my @tk = split /,/;
-            next unless defined $com_date{$tk[0]};
-
-			#print STDERR "$tk[0], $tk[4], $file\n";
-
-            push @cp, $tk[4];
-            last if @cp == $K;
-        }
-        close HP;
-        
-        if(@cp >= $K) {
-			$file =~ s{\.raw$}{}isg;
-            $data{$file} = \@cp;
-        }
-        else {
-            print STDERR $#cp+1, ", $K, $file\n";
-        }
-    }
-
-    ### Print the data.
-    print OF "$_ " for sort keys %data;
-    print OF "\n";
-    for my $i (0..($K-1)) {
-        print OF "$data{$_}->[$K-1-$i] " for sort keys %data;
-        print OF "\n";
-    }
-	close OF;
 }
 
 #&gen_common_data;
 #&data_build;
-&sp500_build_multi;
-#&sp100_build_multi;
-
+#&sp500_build_multi;
+&gen_window_data;

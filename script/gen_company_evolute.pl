@@ -17,7 +17,7 @@ sub gen_company_evolute {
     my @osuf = ('evolute', 'cevolute');
     my @suf = ('rank', 'crank');
     for my $i (0..$#suf) {
-        open EVO, ">${prefix}_$date[1]_$date[-1].$osuf[$i]" or die "${prefix}_$date[1]_$date[-1].$osuf[$i] failed...\n";
+        open EVO, ">${prefix}_$date[0]_$date[-1].$osuf[$i]" or die "${prefix}_$date[0]_$date[-1].$osuf[$i] failed...\n";
 
         my %comps;
         for my $file (sort `ls ../data/sp*.data`) {
