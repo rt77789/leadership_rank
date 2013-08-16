@@ -35,9 +35,11 @@ plot_stock_dynamic_influence <- function(ticker = NULL) {
 	levels(res$date) = 1:length(levels(res$date))
 	pos = seq(from = 1, to = length(labels), by = 10)
 
-	ggplot(res) + geom_point(aes(x = date, y = y, group = Stock, color = factor(Stock), shape = factor(Stock))) + 
+	ggplot(res) + 
+		#geom_point(aes(x = date, y = y, group = Stock, color = factor(Stock), shape = factor(Stock))) + 
 		geom_line(aes(x = date, y = y, group = Stock, color = factor(Stock))) + scale_x_discrete(breaks = c(pos), 
-		labels = c(labels[pos])) + theme(axis.text.y = element_text(size = rel(1), angle = 60), axis.text.x = element_text(size = rel(0.5), 
+		labels = c(labels[pos])) + 
+		theme(axis.text.y = element_text(size = rel(1), angle = 60), axis.text.x = element_text(size = rel(0.5), 
 		angle = 45), legend.position = "right", axis.title.x = element_blank(), axis.title.y = element_blank()) # + scale_colour_manual(values=cbPalette)
 
 

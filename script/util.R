@@ -1,4 +1,5 @@
-
+library(vars)
+library(fUnitRoots)
 # 
 ### Load config.file.
 config = read.table('../resource/config.file', header=F, sep=',')
@@ -8,11 +9,23 @@ config[,2] = as.vector(config[,2])
 
 ### Compute the s & p 500 index.
 # ts.plot(cal_sp500_index('../data/sp500_1374586200_1374609600.raw', '../resource/sp500_market_cap.table'))
-cal_sp500_index <- function(rawfile, capfile) {
+cal_sp500_index <- function() {
 	
 	data = read.table(get_filename_by_suffix('raw'), header=T)
-	rbase = read.table('../resource/sp500_market_cap.table', header=F, , col.names=c('stock', 'cap'))
+	rbase = read.table('../resource/sp500_market_cap.table', header=F, col.names=c('stock', 'cap'))
 	rownames(rbase) = rbase[,1]
+	
+	ndata = apply(sapply(colnames(data), function(x) { data[, x] * rbase[x, 2] / sum(rbase[,2]) } ), 1, sum)
+}
+
+cal_sp500_sector_index <- function(sec) {
+	data = read.table(get_filename_by_suffix('raw'), header=T)
+	rbase = read.table('../resource/sp500_market_cap.table', header=F, col.names=c('stock', 'cap'))
+	rownames(rbase) = rbase[,1]
+	
+	sector.list = read.table('../resource/sp500.sector', header=F, col.names=c('stock', 'sector'), sep=',')
+	csec = intersect(colnames(data), subset(sector.list, sector == sec)$stock)
+	data = data[, csec]
 	
 	ndata = apply(sapply(colnames(data), function(x) { data[, x] * rbase[x, 2] / sum(rbase[,2]) } ), 1, sum)
 }
@@ -100,4 +113,17 @@ frame_convert <- function(f) {
 ### Normalize 
 norm_vector <- function(v) {
 	(v - mean(v)) / sd(v)
+}
+
+### Check whether a time series is stationary.
+check_stationary <- function(ts) {
+
+	### p-value is less than 0.05 means the data is stationary and doesn't need to be differenced.
+	#print(adfTest(ts))
+	ifelse(attr(adfTest(ts), 'test')$p.value < 0.05, T, F) 
+}
+
+### 
+differ_time_series <- function(ts) {
+	(ts[-1] - ts[-length(ts)])/ts[-length(ts)]
 }

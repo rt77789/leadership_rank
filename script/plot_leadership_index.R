@@ -22,6 +22,8 @@ plot_leadership_index <- function() {
 				
 		dev.new()
 		p = ggplot(data) + geom_line(aes(x, y, group=factor(g), color=factor(g)))
-		ggsave(p, file=paste(config['pics_dir', 2], 'leadership_index_', config['start_stamp', 2], '_', config['end_stamp', 2], '.eps', sep=''), width=1.6, height=0.6, scale=5)
+		for(suf in c('.eps', '.pdf')) {
+			ggsave(p, file=paste(config['pics_dir', 2], 'leadership_index_', config['start_stamp', 2], '_', config['end_stamp', 2], suf, sep=''), width=1.6, height=0.6, scale=5)
+		}
 		p
 }

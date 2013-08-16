@@ -1,6 +1,8 @@
 
 set.seed(seed = 1)
 
+source('util.R')
+
 #### Build the graph of stock relationships.
 build_graph <- function(fd, threshold = 0.4, type = "ccf", lag.max = 14) {
 	#dd = read.table('../data/sp500_200.data', header=T)
@@ -24,7 +26,7 @@ build_graph <- function(fd, threshold = 0.4, type = "ccf", lag.max = 14) {
 		#d = apply(d, 2, function(x) { (x[-1] - x[-length(x)]) / x[-length(x)] })
 
 		col = ncol(d)
-
+		sname = colnames(d)
 
 		mat = matrix(0, nrow = col, ncol = col)
 
@@ -34,45 +36,55 @@ build_graph <- function(fd, threshold = 0.4, type = "ccf", lag.max = 14) {
 
 		### Threshold, which is used to filter the too small cross-correlation coefficient.
 		# threshold = 0.4
-
-
-
 		for (i in 1:col) {
-			#print(i)
+			print(i)
 			for (j in 1:col) {
-				if (var(d[, i]) == 0 || var(d[, j]) == 0) {
-					mat[i, j] = 0
-				} else {
-					res = ccf(d[, i], d[, j], type = "correlation", lag.max = lag.max, plot = F)
+				if (var(d[, i]) == 0 || var(d[, j]) == 0 || i == j) 
+					next
+				mat[i, j] = 0
 
-					pos = which(res$acf == max(res$acf))[1]
+				res = ccf(d[, i], d[, j], type = "correlation", lag.max = lag.max, plot = F)
 
-					if (type == "ccf") {
-						if(res$lag[pos] < 0 && res$acf[pos] > threshold) {
+				pos = which(res$acf == max(res$acf))[1]
+
+				if (type == "ccf") {
+					if (res$lag[pos] < 0 && res$acf[pos] > threshold) {
 						### i lead j, and pagerank works at this style.
 						### Make sure the correlation is positive and bigger than the threshold.
-						mat[i,j] = res$acf[pos]
-						lags[i,j] = pos - row/2 - 1
+						mat[i, j] = res$acf[pos]
+						lags[i, j] = pos - row/2 - 1
 					}
-					} else {
-						if (type == "eccf") {
-							res$acf[res$acf < 0] = 0
-							necc = mean(res$acf[res$lag < 0])
-							pecc = mean(res$acf[res$lag > 0])
-							ecc = max(necc, pecc)
+				} else if (type == "eccf") {
+					res$acf[res$acf < 0] = 0
+					necc = mean(res$acf[res$lag < 0])
+					pecc = mean(res$acf[res$lag > 0])
+					ecc = max(necc, pecc)
 
-							#if(res$lag[pos] < 0 && res$acf[pos] > threshold) 
-							if (necc > pecc && ecc > threshold) {
-								### i lead j, and pagerank works at this style.
-								### Make sure the correlation is positive and bigger than the threshold.
-								mat[i, j] = ecc
-								lags[i, j] = pos - row/2 - 1
-							}
-						}
+					#if(res$lag[pos] < 0 && res$acf[pos] > threshold) 
+					if (necc > pecc && ecc > threshold) {
+						### i lead j, and pagerank works at this style.
+						### Make sure the correlation is positive and bigger than the threshold.
+						mat[i, j] = ecc
+						lags[i, j] = pos - row/2 - 1
 					}
+				} else if (type == "granger") {
+					### Check stationary!!!
+					x = differ_time_series(d[, sname[i]])
+					y = differ_time_series(d[, sname[j]])
+					
+					if(!check_stationary(x)) stop(sname[i])
+					if(!check_stationary(y)) stop(sname[j])
+					
+					td = data.frame(x = x, y = y)
+					
+					### Selected lag under SC critieria.
+					slag = VARselect(td, lag.max = lag.max, type='const')$selection
+					#print(slag)
+					var.m = VAR(td, p = slag[3], type = "const")
+					rc = causality(var.m, cause = 'x')
 
-
-				}
+					if (rc$Granger$p.value < 0.05) mat[i, j] = 1
+				} else {}
 			}
 		}
 		mat2 = mat2 + mat

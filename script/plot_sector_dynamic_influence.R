@@ -11,7 +11,6 @@ source('util.R')
 plot_sector_dynamic_influence <- function() {
 	d = read.table(get_filename_by_suffix('msector'), header = T, sep = ",")
 	
-	
 	labels = levels(d[, 1])
 	levels(d[, 1]) = 1:length(levels(d[, 1]))
 	pos = seq(from = 1, to = length(labels), by = 10)
@@ -22,11 +21,49 @@ plot_sector_dynamic_influence <- function() {
 	
 	p = ggplot(d) + geom_line(aes(x = date, y = value, group = factor(sector), color = factor(sector))) + scale_x_discrete(breaks = c(pos), 
 	labels = c(labels[pos])) + facet_grid(sector ~ ., scales = "free") + theme(axis.text.y = element_text(size = rel(0.5), angle = 60), axis.text.x = element_text(size = rel(0.5), angle = 90), axis.title.x = element_blank(), axis.title.y = element_blank(), legend.position="none", strip.text.y = element_text(size = 4, colour = "black", angle = 0)) + 
-	scale_colour_manual(values = cbPalette) 
+	scale_colour_manual(values = cbPalette) +xlab("Time") +
+  	ylab("") +
+  	ggtitle("Dynamic Influence of each sector.")
+
 	
-	ggsave(p, file=paste(config['pics_dir', 2], 'stock_dynamic_influence_', config['start_stamp', 2], '_', config['end_stamp', 2], '.eps', sep=''), width=1, height=1.6, scale=4)
+	for(suf in c('.eps', '.pdf')) {
+		ggsave(p, file=paste(config['pics_dir', 2], 'sector_dynamic_influence_', config['start_stamp', 2], '_', config['end_stamp', 2], suf, sep=''), width=1, height=1.6, scale=4)
+	}
 	dev.new() 
 	p
+}
+
+plot_sp500_sector_index <- function() {
+	d = read.table(get_filename_by_suffix('msector'), header = T, sep = ",")
+	
+	sector.index = sapply(levels(d$sector), function(x) {norm_vector(cal_sp500_sector_index(x))})
+	sector.index = frame_convert(sector.index)
+	
+	sp500.index = norm_vector(cal_sp500_index())
+	
+	cbPalette <- brewer.pal(10, "Paired")
+	
+	#ggplot(sector.index) + geom_line(aes(x = x, y = y, group = factor(g), color = factor(g)))
+	p = ggplot(sector.index) + 
+	geom_line(aes(x = x, y = y, group = factor(g), color = factor(g))) + 
+	geom_line(data = data.frame(x = sector.index$x, y = sp500.index), aes(x=x, y = y), color = 'black', linetype='solid') + 
+	facet_grid(g ~ ., scales = "free") + 
+	theme(axis.text.y = element_text(size = rel(0.5), angle = 60), 
+	axis.text.x = element_text(size = rel(0.5), angle = 90), 
+	axis.title.x = element_blank(), 
+	axis.title.y = element_blank(), 
+	legend.position="none", 
+	strip.text.y = element_text(size = 4, colour = "black", angle = 0)) + 
+	scale_colour_manual(values = cbPalette) +
+	xlab("Time") +
+	ylab("") +
+	ggtitle("Sector Index in S&P 500 companies.")
+  	
+  	for(suf in c('.eps', '.pdf')) {
+		ggsave(p, file=paste(config['pics_dir', 2], config['file_prefix', 2], 'sector_index_', config['start_stamp', 2], '_', config['end_stamp', 2], suf, sep=''), width=1, height=1.6, scale=4)
+	}
+  	dev.new()
+  	p
 }
 
 ### Compute cross-correlation between each pair of sector's dynamic influence series.
@@ -94,12 +131,14 @@ granger_test <- function(ts1, ts2) {
 		var.m = VAR(td, p = slag[3], type = "const")
 
 		rc = causality(var.m, cause = "x")
-
+		
+		print(rc)
 		if (rc$Granger$p.value < 0.05) {
 			1
 		}
 
 		rc = causality(var.m, cause = "y")
+		print(rc)
 		if (rc$Granger$p.value < 0.05) {
 			-1
 		}
