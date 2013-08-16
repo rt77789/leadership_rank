@@ -8,3 +8,4 @@ window_size,128
 start_stamp,1374586200
 end_stamp,1374609600
 step_seconds,60
+data_dir,../data/sp100_128_1374586200_1374609600_step_1/

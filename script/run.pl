@@ -1,5 +1,7 @@
 #!/usr/bin/perl -w
 
+print "generate intraday data file...\n";
+`perl download_intraday_data_goog.pl`;
 ## gen_intraday_matrix.
 print "run gen_intraday_matrix...\n";
 `perl gen_intraday_matrix.pl`;
