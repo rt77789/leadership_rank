@@ -19,11 +19,14 @@ plot_sector_dynamic_influence <- function() {
 	
 	cbPalette <- brewer.pal(10, "Paired")
 
-	dev.new()
-	ggplot(d) + geom_line(aes(x = date, y = value, group = factor(sector), color = factor(sector))) + scale_x_discrete(breaks = c(pos), 
-	labels = c(labels[pos])) + facet_grid(sector ~ ., scales = "free") + theme(axis.text.y = element_text(size = rel(0.5), angle = 60), axis.text.x = element_text(size = rel(0.5), 
-	angle = 45), legend.position = "right", axis.title.x = element_blank(), axis.title.y = element_blank()) + 
+	
+	p = ggplot(d) + geom_line(aes(x = date, y = value, group = factor(sector), color = factor(sector))) + scale_x_discrete(breaks = c(pos), 
+	labels = c(labels[pos])) + facet_grid(sector ~ ., scales = "free") + theme(axis.text.y = element_text(size = rel(0.5), angle = 60), axis.text.x = element_text(size = rel(0.5), angle = 90), axis.title.x = element_blank(), axis.title.y = element_blank(), legend.position="none", strip.text.y = element_text(size = 4, colour = "black", angle = 0)) + 
 	scale_colour_manual(values = cbPalette) 
+	
+	ggsave(p, file=paste(config['pics_dir', 2], 'stock_dynamic_influence_', config['start_stamp', 2], '_', config['end_stamp', 2], '.eps', sep=''), width=1, height=1.6, scale=4)
+	dev.new() 
+	p
 }
 
 ### Compute cross-correlation between each pair of sector's dynamic influence series.
