@@ -46,7 +46,8 @@ sub load_common_stamp {
 	open COM, "<../resource/$config{'common_stamp'}.info" or die "open ../resource/$config{'common_stamp'}.info failed...\n";
 	while(<COM>) {
 		chomp;
-		$stamp{$_} = 1;
+		$stamp{$_} = 1 if($_ <= $config{'end_stamp'} && $config{'start_stamp'} <= $_);
+
 	}
     close COM;
 	%stamp;

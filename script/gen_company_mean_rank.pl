@@ -66,10 +66,10 @@ my @date;
 	}
 	@date = sort @date;
 
-    &gen_campany_mean_rank('pagerank', 'mrank', "${prefix}_$date[1]_$date[-1].mrank");
-    &gen_campany_mean_rank('pagerank', 'mscore', "${prefix}_$date[1]_$date[-1].mscore");
-    &gen_campany_mean_rank('circuit', 'mcrank', "${prefix}_$date[1]_$date[-1].mcrank");
-    &gen_campany_mean_rank('circuit', 'mcscore', "${prefix}_$date[1]_$date[-1].mcscore");
+    &gen_campany_mean_rank('pagerank', 'mrank', "${prefix}_$date[0]_$date[-1].mrank");
+    &gen_campany_mean_rank('pagerank', 'mscore', "${prefix}_$date[0]_$date[-1].mscore");
+    &gen_campany_mean_rank('circuit', 'mcrank', "${prefix}_$date[0]_$date[-1].mcrank");
+    &gen_campany_mean_rank('circuit', 'mcscore', "${prefix}_$date[0]_$date[-1].mcscore");
 }
 
 &main;

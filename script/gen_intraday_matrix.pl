@@ -64,7 +64,7 @@ sub gen_inraday_matrix {
 	my $from = $stamp[0];
 	my $to = $stamp[-1];
 
-	die "\@stamp != \$config{'max_day'}" if @stamp != $config{'max_day'};
+	die "\@stamp != \$config{'max_day'}", $#stamp+1, " = $config{max_day}\n" if @stamp != $config{'max_day'};
 
 	open OF, ">../data/$config{'file_prefix'}${from}_$to.raw" or die "open ../data/$config{'file_prefix'}${from}_$to.raw failed...\n";
 	for my $k (sort keys %resd) {
@@ -78,7 +78,6 @@ sub gen_inraday_matrix {
 		print OF "\n";
 	}
 	close OF;
-
 }
 
 #Configer::disp_hash(\%config);

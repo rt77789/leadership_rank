@@ -1,5 +1,6 @@
 
-1. refactor cal_index.R, 
+1. revise build_graph(), add var + granger model.
+2. to do: run this model and to see the leadership index.
 2. to do: tune the parameters, thresholds etc.
 3. to do: what about relative return time series correlation?
 
