@@ -5,8 +5,8 @@ step_day,1
 company_list,sp100.list
 file_prefix,sp100_128_
 window_size,128
-start_stamp,1374586200
-end_stamp,1374609600
+start_stamp,1374672600
+end_stamp,1374696000
 step_seconds,60
-data_dir,../data/sp100_128_1374586200_1374609600_step_1/
+data_dir,../data/sp100_128_1374672600_1374696000_step_1/
 pics_dir,../tex/pics/

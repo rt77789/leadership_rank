@@ -18,16 +18,21 @@ cal_sp500_index <- function() {
 	ndata = apply(sapply(colnames(data), function(x) { data[, x] * rbase[x, 2] / sum(rbase[,2]) } ), 1, sum)
 }
 
-cal_sp500_sector_index <- function(sec) {
+cal_sp500_sector_index <- function(sec, weight.type) {
 	data = read.table(get_filename_by_suffix('raw'), header=T)
 	rbase = read.table('../resource/sp500_market_cap.table', header=F, col.names=c('stock', 'cap'))
+	rrank = read.table(get_filename_by_suffix('mcrank'), header=F, col.names=c('stock', 'score', 'cap', 'sector', 'industry'))
+	
+	rownames(rrank) = rrank[,1]
 	rownames(rbase) = rbase[,1]
 	
 	sector.list = read.table('../resource/sp500.sector', header=F, col.names=c('stock', 'sector'), sep=',')
 	csec = intersect(colnames(data), subset(sector.list, sector == sec)$stock)
 	data = data[, csec]
 	
-	ndata = apply(sapply(colnames(data), function(x) { data[, x] * rbase[x, 2] / sum(rbase[,2]) } ), 1, sum)
+	ndata = switch(weight.type,
+             'cap' = apply(sapply(colnames(data), function(x) { data[, x] * rbase[x, 2] / sum(rbase[,2]) } ), 1, sum),
+             'score' = apply(sapply(colnames(data), function(x) { data[, x] * rrank[x, 2] / sum(rrank[,2]) } ), 1, sum))
 }
 
 #### Compute leadership index, topk is the used number of leaders.
@@ -127,3 +132,29 @@ check_stationary <- function(ts) {
 differ_time_series <- function(ts) {
 	(ts[-1] - ts[-length(ts)])/ts[-length(ts)]
 }
+
+### Test the granger causality between ts1 and ts2.
+granger_test <- function(ts1, ts2) {
+	res = 0
+	### Selected lag under SC critieria.
+	td = data.frame(x = ts1, y = ts2)
+	slag = VARselect(td, lag.max = 14, type = "const")$selection
+	print(slag)
+	var.m = VAR(td, p = slag[3], type = "const")
+
+	rc = causality(var.m, cause = "x")
+
+	print(rc)
+	if (rc$Granger$p.value < 0.05) {
+		res = 1
+	}
+
+	rc = causality(var.m, cause = "y")
+	print(rc)
+	if (rc$Granger$p.value < 0.05) {
+		res = -1
+	}
+	res
+}
+
+
