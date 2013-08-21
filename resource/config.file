@@ -2,11 +2,11 @@ common_stamp,common_stamp
 hist_price,n15intraday
 max_day,391
 step_day,1
-company_list,sp100.list
-file_prefix,sp100_128_
+company_list,sp500.list
+file_prefix,sp500_128_
 window_size,128
 start_stamp,1374586200
 end_stamp,1374609600
 step_seconds,60
-data_dir,../data/sp100_128_1374586200_1374609600_step_1/
+data_dir,../data/sp500_128_1374586200_1374609600_step_1_ccf
 pics_dir,../tex/pics/

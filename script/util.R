@@ -1,5 +1,6 @@
-library(vars)
-library(fUnitRoots)
+
+suppressMessages(library(vars))
+suppressMessages(library(fUnitRoots))
 # 
 ### Load config.file.
 config = read.table('../resource/config.file', header=F, sep=',')

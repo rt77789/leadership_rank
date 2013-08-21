@@ -1,6 +1,5 @@
 
-1. revise build_graph(), add var + granger model.
-2. to do: run this model and to see the leadership index.
+1. add suppressMessages(library(xx)) to disable the print messages showing.
 2. to do: tune the parameters, thresholds etc.
 3. to do: what about relative return time series correlation?
 
