@@ -1,7 +1,7 @@
 
 library(ggplot2)
 library(RColorBrewer)
-libarry(pracma)
+library(pracma)
 
 source("util.R")
 

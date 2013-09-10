@@ -19,12 +19,11 @@ plot_sector_dynamic_influence <- function() {
 	
 	cbPalette <- brewer.pal(10, "Paired")
 
-	
 	p = ggplot(d) + 
 	geom_line(aes(x = date, y = value, group = factor(sector), color = factor(sector)), size=0.3) + 
 	scale_x_discrete(breaks = c(pos), labels = c(labels[pos])) + 
 	facet_grid(sector ~ ., scales = "free") + 
-	theme(axis.text.y = element_blank(), 
+	theme(#axis.text.y = element_blank(), 
 	axis.ticks.y = element_blank(), 
 	axis.text.x = element_text(size = rel(0.5), angle = 90), 
 	axis.title.x = element_blank(), 
@@ -34,7 +33,8 @@ plot_sector_dynamic_influence <- function() {
 	plot.title = element_text(size = 7)) + 
 	scale_colour_manual(values = cbPalette) +xlab("Time") +
   	ylab("") +
-  	ggtitle("Dynamic Leadership Score of each sector.")
+  	ggtitle("Dynamic Leadership Score of each sector.") +
+  	ylim(0, max(d$value))
 
 	
 	for(suf in c('.eps', '.pdf')) {
