@@ -120,6 +120,22 @@ page_rank <- function(mat, max_error = 1e-06, lambda = 0.85) {
 	rank
 }
 
+### 
+page_rank2 <- function(mat, max_error = 1e-06, lambda = 0.85) {
+	mat = as.matrix(mat)
+	n = nrow(mat)
+	### Normalize each column, if sum of each row is zero, then leave them as all zeros.
+	#mat = t(apply(mat, 2, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
+#mat = t(apply(mat, 2, function(x) { if(sum(x) > 0) { (x > -1) * 1./ n } else {x}}))
+
+	rank = matrix(runif(n * 1), n, 1)
+	prank = matrix(Inf, n, 1)
+
+	rank = solve(diag(nrow(mat)) - lambda * mat) %*% matrix((1 - lambda)/n, n, 1)
+	rank
+}
+
+
 ## Circuit Model.
 cal_single_potential <- function(node, mat, seeds, iternum = 50, lambda = 0.85) {
 	#print(node)
@@ -129,6 +145,25 @@ cal_single_potential <- function(node, mat, seeds, iternum = 50, lambda = 0.85) 
 	snvec = matrix(0, n, 1)
 	snvec[seeds] = 1
 	envec[node] = 1
+
+	for (i in 1:iternum) {
+		poten = lambda * (mat %*% poten + envec) 
+		#### 
+		poten[poten & snvec] = 0
+	}
+
+	poten = poten/poten[node]
+}
+
+cal_single_potential2 <- function(node, mat, seeds, iternum = 50, lambda = 0.85, cap = 1) {
+	#print(node)
+	n = nrow(mat)
+	poten = matrix(0, n, 1)
+	envec = matrix(0, n, 1)
+	snvec = matrix(0, n, 1)
+	snvec[seeds] = 1
+	envec[node] = cap
+	poten[node] = cap
 
 	for (i in 1:iternum) {
 		poten = lambda * (mat %*% poten + envec) 
@@ -185,8 +220,13 @@ cal_potential <- function(mat) {
 	n = nrow(mat)
 	seeds = c()
 	
+	cap = read.table("../resource/sp500_market_cap.table", header = F)
+	rownames(cap) = cap[, 1]
+	
 	rank = sapply(1:n, function(x) {
+		#print(cap[rownames(mat)[x], 2] / max(cap[,2]))
 		sum(cal_single_potential(x, mat, seeds))
+		#sum(cal_single_potential2(x, mat, seeds, cap = cap[rownames(mat)[x], 2] / max(cap[,2])))
 	})
 	rank = matrix(rank, n, 1)
 	rownames(rank) = colnames(mat)
