@@ -95,7 +95,7 @@ build_graph <- function(fd, threshold = 0.4, type = "ccf", lag.max = 14) {
 }
 
 ### 
-page_rank <- function(mat, max_error = 1e-06, lambda = 0.85) {
+page_rank <- function(mat, max_error = 1e-6, lambda = 0.85) {
 	mat = as.matrix(mat)
 	n = nrow(mat)
 	### Normalize each column, if sum of each row is zero, then leave them as all zeros.
@@ -109,15 +109,17 @@ page_rank <- function(mat, max_error = 1e-06, lambda = 0.85) {
 		prank = rank
 
 		rank = lambda * mat %*% rank + matrix((1 - lambda)/n, n, 1)
-		rank = apply(rank, 2, function(x) {
-			if (sum(x) > 0) {
-				x/sum(x)
-			} else {
-				x
-			}
-		})
+		# rank = apply(rank, 2, function(x) {
+			# if (sum(x**2) > 0) {
+				# x/sum(x**2)
+			# } else {
+				# x
+			# }
+		# })
+		
+		rank = rank / sum(rank ** 2)
 	}
-	rank
+	rank / sum(rank)
 }
 
 ### 
@@ -132,6 +134,9 @@ page_rank2 <- function(mat, max_error = 1e-06, lambda = 0.85) {
 	prank = matrix(Inf, n, 1)
 
 	rank = solve(diag(nrow(mat)) - lambda * mat) %*% matrix((1 - lambda)/n, n, 1)
+	
+	rank = rank - min(rank)
+	rank = rank / sum(rank)
 	rank
 }
 

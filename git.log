@@ -1,5 +1,6 @@
 
-1. add suppressMessages(library(xx)) to disable the print messages showing.
-2. to do: tune the parameters, thresholds etc.
-3. to do: what about relative return time series correlation?
+1. revise page_rank() function, previous norm is wrong, sum(x ** 2) is ok.
+2. why inverse computation is not consistent with iteration.
+3. to do: tune the parameters, thresholds etc.
+4. to do: what about relative return time series correlation?
 
