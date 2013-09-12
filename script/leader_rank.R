@@ -168,7 +168,6 @@ cal_single_potential2 <- function(node, mat, seeds, iternum = 50, lambda = 0.85,
 	snvec = matrix(0, n, 1)
 	snvec[seeds] = 1
 	envec[node] = cap
-	poten[node] = cap
 
 	for (i in 1:iternum) {
 		poten = lambda * (mat %*% poten + envec) 
@@ -176,7 +175,11 @@ cal_single_potential2 <- function(node, mat, seeds, iternum = 50, lambda = 0.85,
 		poten[poten & snvec] = 0
 	}
 
-	poten = poten/poten[node]
+	ifelse(poten[node] > 0, poten / poten[node], poten)
+    if(poten[node] > 0) {
+        poten = poten / poten[node]
+    }
+    poten
 }
 
 cal_seed_potential <- function(mat, topk) {
