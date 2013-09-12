@@ -230,8 +230,8 @@ cal_potential <- function(mat) {
 	
 	rank = sapply(1:n, function(x) {
 		#print(cap[rownames(mat)[x], 2] / max(cap[,2]))
-		sum(cal_single_potential(x, mat, seeds))
-		#sum(cal_single_potential2(x, mat, seeds, cap = cap[rownames(mat)[x], 2] / max(cap[,2])))
+		#sum(cal_single_potential(x, mat, seeds))
+		sum(cal_single_potential2(x, mat, seeds, cap = cap[rownames(mat)[x], 2] / max(cap[,2])))
 	})
 	rank = matrix(rank, n, 1)
 	rownames(rank) = colnames(mat)
