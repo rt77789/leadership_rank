@@ -7,7 +7,7 @@ source('util.R')
 
 plot_leadership_index <- function() {
 		
-		leader.index = cal_leader_index(1)
+		leader.index = cal_leader_index(2)
 		sp500.index = cal_sp500_index()
 		
 		leader.index = (leader.index - mean(leader.index)) / sd(leader.index)

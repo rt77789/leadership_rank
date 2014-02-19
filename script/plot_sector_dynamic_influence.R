@@ -13,15 +13,17 @@ plot_sector_dynamic_influence <- function() {
 	d = read.table(get_filename_by_suffix('msector'), header = T, sep = ",")
 	
 	labels = levels(d[, 1])
+	labels2 = 1:length(levels(d[, 1]))
 	levels(d[, 1]) = 1:length(levels(d[, 1]))
 	pos = seq(from = 1, to = length(labels), by = 10)
-	d = subset(d, model == "mean_rank")
+	d = subset(d, model == "mean_crank")
+	
 	
 	cbPalette <- brewer.pal(10, "Paired")
 
 	p = ggplot(d) + 
 	geom_line(aes(x = date, y = value, group = factor(sector), color = factor(sector)), size=0.3) + 
-	scale_x_discrete(breaks = c(pos), labels = c(labels[pos])) + 
+	scale_x_discrete(breaks = c(pos), labels = c(labels2[pos])) + 
 	facet_grid(sector ~ ., scales = "free") + 
 	theme(axis.text.y = element_blank(), 
 	axis.ticks.y = element_blank(), 

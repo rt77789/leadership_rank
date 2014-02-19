@@ -24,7 +24,7 @@ sub gen_inraday_matrix {
 		open HP, "<../resource/$config{'hist_price'}/$file" or die "open ../resource/$config{'hist_price'}/$file failed...";
 		my @cp;
 		<HP>;
-		$file =~ s{\..*?$}{}isg;
+		$file =~ s{\.[^.]*?$}{}isg;
 		while(<HP>) {
 			chomp;
 			my @tk = split /,/;

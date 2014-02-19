@@ -9,7 +9,7 @@ plot_stock_dynamic_influence <- function(ticker = NULL) {
 
 	set.seed(1)
 	
-	d = read.table(get_filename_by_suffix('cevolute'))
+	d = read.table(get_filename_by_suffix('evolute'))
 	res = matrix(nrow = 0, ncol = 4)
 	#cbPalette <- brewer.pal(10, "Paired")
 	indx = c(1, 2, 3)

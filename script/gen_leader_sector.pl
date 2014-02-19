@@ -1,8 +1,12 @@
 #!/usr/bin/perl -w
 
+use Configer;
+
 sub gen_leader_sector {
 	my @date;
 	my $prefix;
+        my %cap = Configer::load_cap_file;
+        
 	for my $file (sort `ls ../data/sp*.log`) {
 		chomp($file);
 		$file =~ s{\.log$}{}isg;
@@ -34,13 +38,13 @@ sub gen_leader_sector {
 			while(<RANK>) {
 				# 
 				chomp;
-				m{^".*?"\s+(.*?)\s+(.*?)\s+"(.*?)"\s+"(.*?)"$}isg or die "$_ can't match.\n";
-				my ($score, $cap, $sector, $industry) = ($1, $2, $3, $4);
+				m{^"(.*?)"\s+(.*?)\s+(.*?)\s+"(.*?)"\s+"(.*?)"$}isg or die "$_ can't match.\n";
+				my ($tik, $score, $cap, $sector, $industry) = ($1, $2, $3, $4, $5);
 				#print "$score, $cap, $sector, $industry\n";
-				$sscore{$sector} += $score;
-				$snum{$sector}++;
-				$iscore{$industry} += $score;
-				$inum{$industry}++;
+				$sscore{$sector} += $score * $cap{$tik};
+				$snum{$sector} += $cap{$tik};
+				$iscore{$industry} += $score * $cap{$tik};
+				$inum{$industry} += $cap{$tik};
 			}
 			close RANK;
 
@@ -49,6 +53,7 @@ sub gen_leader_sector {
 			}
 			#print "$_\n" for keys %snum;
 			for my $si (keys %sscore) {
+                            print STDERR "$sscore{$si}, $snum{$si}\n";
 				print SEC "$date,\"$si\",", $sscore{$si} / $snum{$si}, ",mean_$suf\n";
 			}
 
@@ -58,13 +63,12 @@ sub gen_leader_sector {
 			}
 			#print "$_\n" for keys %snum;
 			for my $ii (keys %iscore) {
-				print IND "$date,\"$ii\",", $iscore{$ii} / $inum{$ii}, ",mean_$suf\n";
+				print IND "$date,\"$ii\",", $inum{$ii} > 0 ? $iscore{$ii} / $inum{$ii} : 0, ",mean_$suf\n";
 			}
 		}
 	}
 	close IND;
 	close SEC;
-
 }
 
 &gen_leader_sector;

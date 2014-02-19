@@ -40,6 +40,19 @@ sub load_company_list {
 	%comps;
 }
 
+### Load Cap file.
+sub load_cap_file {
+    my %cap;
+    open CAP, "<../resource/sp500_market_cap.table" or die "open ../resource/sp500_market_cap.table failed...\n";
+    while(<CAP>)  {
+        chomp;
+        my @tk = split /\s+/;
+        $cap{$tk[0]} = $tk[1];
+    }
+    close CAP;
+    %cap;
+}
+
 ####
 sub load_common_stamp {
 	my %stamp;

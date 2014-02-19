@@ -52,6 +52,11 @@ build_graph <- function(fd, threshold = 0.4, type = "ccf", lag.max = 14) {
 						### i lead j, and pagerank works at this style.
 						### Make sure the correlation is positive and bigger than the threshold.
 						mat[i, j] = res$acf[pos]
+						print(i)
+						print(j)
+						print(mat[i, j])
+						print(threshold)
+						print(res$acf[pos])
 						lags[i, j] = pos - row/2 - 1
 					}
 				} else if (type == "eccf") {
@@ -139,6 +144,30 @@ page_rank2 <- function(mat, max_error = 1e-06, lambda = 0.85) {
 	rank = rank / sum(rank)
 	rank
 }
+
+
+### Previous page_ranks are wrong, this maybe correct. Check it with http://en.wikipedia.org/wiki/PageRank.
+page_rank3 <- function(mat, max_error = 1e-6, lambda = 0.85) {
+	mat = as.matrix(mat)
+	n = nrow(mat)
+	### Normalize each column, if sum of each row is zero, then leave them as all zeros.
+	mat = (apply(mat, 2, function(x) { if(sum(x) > 0) { x / sum(x) } else {x}}))  
+	
+	rank = matrix(runif(n * 1), n, 1)
+	rank = rank / sum(rank)
+	
+	prank = matrix(Inf, n, 1)
+
+	while (sum((rank - prank)^2) > max_error) {
+		prank = rank
+
+		rank = lambda * mat %*% rank + matrix((1 - lambda)/n, n, 1)		
+		#print(rank)
+	}
+	#rank / sum(rank)
+	rank
+}
+
 
 
 ## Circuit Model.
@@ -278,7 +307,7 @@ run <- function(epf) {
 	write.table(mat, file = paste(epf, "_comps_thresh_0.mat", sep = ""), row.names = T, col.names = T)
 
 	#### Pagerank Model #####
-	rank = page_rank(mat)
+	rank = page_rank3(mat)
 	rr = disp_stock_rank(rank)
 
 	write.table(rr, file = paste(epf, "_comps_thresh_0.rank", sep = ""), row.names = F, col.names = F, quote = T)
