@@ -1,11 +1,15 @@
 #!/usr/bin/perl -w
 
+use LWP 5.69;                                                    
+use HTTP::Headers;                                               
+use HTTP::Response;  
+
 use LWP;
 use JSON;
 use Data::Dumper;
 use HTTP::Cookies;
 use LWP::ConnCache;
-use HTTP::Request::Common qw(GET);
+use HTTP::Request::Common qw(POST);
 use IO::Uncompress::Gunzip qw(gunzip) ;
 use URI;
 use Mojo::DOM;
@@ -130,37 +134,7 @@ sub download_mc {
 	my $start = "1%2F1%2F1962";
 	my $end = "2%2F19%2F2014";
 
-#	my $res = $ag->post("http://ycharts.com/companies/AAPL/market_cap/data_ajax",
-#		{
-#			'startDate' => $start,
-#			'endDate' => $end,
-#			'pageNum' => 2,
-#		});
-#
-#	my $obj = $res->decoded_content(charset => 'none');
-#	#print $obj;
-#
-#	#print $cookie_jar->as_string, "\n";
-#	print "The structure of obj: ".Dumper($obj);
-#
-#	#for my $p (1..$maxp) {
-#	#	my $params = "startDate=$start&endDate=$end&pageNum=$p";
-#	#	my $mc = &extract_market_cap($res->content);
-#	#}
-	my $url = new URI("http://ycharts.com/companies/AAPL/market_cap/data_ajax");
-	#/companies/AAPL/market_cap/data_ajax
-	my %aryParams = (
-		'startDate' => $start,
-		'endDate' => $end,
-		'pageNum' => 2
-	);
-	$url->query_form('startDate' => $start,
-		'endDate' => $end,
-		'pageNum' => 2);
-
-	my $header = $h = HTTP::Headers->new(
-
-	my @header = ("Accept" => "application/json, text/plain, */*",
+	my $header = HTTP::Headers->new("Accept" => "application/json, text/plain, */*",
 		"Origin" => "http://ycharts.com",
 		"User-Agent" => "Mozilla/5.0(windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36",
 		"X-CSRFToken" => $ycharts_cookies,
@@ -170,25 +144,68 @@ sub download_mc {
 		"Accept-Language" => "zh-CN,en-US;q=0.8,en;q=0.6,zh;q=0.4",
 		"Connection" => "keep-alive",
 		"Host" => "ycharts.com",
-		"Cache-Control" => "max-age=0"
+		"Cache-Control" => "max-age=0",
 	);
 
-	$request = HTTP::Request->new('POST'); #GET=>"http://ybh.ybcoin.com/btc_sum?t=".rand());
+	$ag->default_headers($header);
 
-	$request->header(@header);
-	$request->url($url);
+	my $submit_values = {
+			'startDate' => $start,
+			'endDate' => $end,
+			'pageNum' => 2,
+		};
+		my $res = $ag->post("http://ycharts.com/companies/AAPL/market_cap/data_ajax", $submit_values);
 
-	$res = $ag->request($request);
 	my $obj = $res->decoded_content(charset => 'none');
 	#print $obj;
 
 	#print $cookie_jar->as_string, "\n";
 	print "The structure of obj: ".Dumper($obj);
 
+#	#for my $p (1..$maxp) {
+#	#	my $params = "startDate=$start&endDate=$end&pageNum=$p";
+#	#	my $mc = &extract_market_cap($res->content);
+#	#}
+#	my $url = new URI("http://ycharts.com/companies/AAPL/market_cap/data_ajax");
+#	#/companies/AAPL/market_cap/data_ajax
+#	my %aryParams = (
+#		'startDate' => $start,
+#		'endDate' => $end,
+#		'pageNum' => 2
+#	);
+#	$url->query_form('startDate' => $start,
+#		'endDate' => $end,
+#		'pageNum' => 2);
+#
+#	my @header = ("Accept" => "application/json, text/plain, */*",
+#		"Origin" => "http://ycharts.com",
+#		"User-Agent" => "Mozilla/5.0(windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36",
+#		"X-CSRFToken" => $ycharts_cookies,
+#		"Content-Type" => "application/x-www-form-urlencoded",
+#		"Referer" => "http://ycharts.com/companies/AAPL/market_cap",
+#		"Accept-Encoding" => "gzip,deflate,sdch",
+#		"Accept-Language" => "zh-CN,en-US;q=0.8,en;q=0.6,zh;q=0.4",
+#		"Connection" => "keep-alive",
+#		"Host" => "ycharts.com",
+#		"Cache-Control" => "max-age=0"
+#	);
+#
+#	$request = HTTP::Request->new('POST'); #GET=>"http://ybh.ybcoin.com/btc_sum?t=".rand());
+#
+#	$request->header(@header);
+#	$request->url($url);
+#
+#	$res = $ag->request($request);
+#	my $obj = $res->decoded_content(charset => 'none');
+#	#print $obj;
+
+	#print $cookie_jar->as_string, "\n";
+	#print "The structure of obj: ".Dumper($obj);
+
 }
 
 
 
 &login;
-sleep(10);
+#sleep(10);
 &download_mc;
