@@ -40,6 +40,10 @@ sub load_company_list {
 	%comps;
 }
 
+sub get_prefix {
+	$config{'prefix'};
+}
+
 ### Load Cap file.
 sub load_cap_file {
     my %cap;

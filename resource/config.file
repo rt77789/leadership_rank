@@ -1,3 +1,4 @@
+prefix,sp500
 common_stamp,common_stamp
 hist_price,n15intraday
 max_day,391
