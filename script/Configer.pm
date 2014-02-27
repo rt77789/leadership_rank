@@ -40,8 +40,8 @@ sub load_company_list {
 	%comps;
 }
 
-sub get_prefix {
-	$config{'prefix'};
+sub get {
+	$config{$_[0]};
 }
 
 ### Load Cap file.

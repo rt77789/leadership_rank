@@ -189,7 +189,7 @@ cal_single_potential <- function(node, mat, seeds, iternum = 50, lambda = 0.85) 
 	poten = poten/poten[node]
 }
 
-cal_single_potential2 <- function(node, mat, seeds, iternum = 50, lambda = 0.85, cap = 1) {
+cal_single_potential2 <- function(node, mat, seeds, iternum = 10, lambda = 0.85, cap = 1) {
 	#print(node)
 	n = nrow(mat)
 	poten = matrix(0, n, 1)

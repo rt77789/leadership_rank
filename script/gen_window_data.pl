@@ -5,8 +5,8 @@ use Configer;
 my %config = Configer::init;
 
 sub gen_window_data {
-	for my $file(`ls ../data/*.raw`) {
-		chomp $file;
+	#for my $file(`ls ../data/*.raw`) {
+	my $file = Configer::get('data_matrix');
 		#print "$file\n";
 
 		open IN, "<$file" or die "open $file failed...\n";
@@ -33,7 +33,7 @@ sub gen_window_data {
 			print OUT (join(' ', @{$_}), "\n")  for @window_data[$from..$to];
 			close OUT;
 		}
-	}
+		#}
 }
 
 &gen_window_data;

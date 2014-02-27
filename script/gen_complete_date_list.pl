@@ -1,7 +1,10 @@
 #!/usr/bin/perl -w
 use List::Util qw(min max);
+use Configer;
 
-my $prefix = 'sp500';
+my %config = Configer::init;
+my $prefix = Configer::get('prefix');
+
 my $from = 20000101;
 my $to = 20140101;
 

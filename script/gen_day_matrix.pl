@@ -3,7 +3,7 @@
 use Configer;
 
 my %config = Configer::init;
-my $prefix = Configer::get_prefix;
+my $prefix = Configer::get('prefix');
 my %valid_comps;
 my %matrix;
 
@@ -35,21 +35,26 @@ sub gen_day_matrix {
 		close IN;
 	}
 
+	my $data_matrix = Configer::get('data_matrix');
+
+	open OUT, ">$data_matrix" or die "open $data_matrix failed...\n";
+
 	for my $d (sort keys %matrix) {
 		my @td;
 		for my $k (sort keys %{$matrix{$d}}) {
 			push @td, "\"$k\"";
 		}
-		print join(' ', @td), "\n";
+		print OUT join(' ', @td), "\n";
 		last;
 	}
 	for my $d (sort keys %matrix) {
-		print "$d";
+		print OUT "$d";
 		for my $k (sort keys %{$matrix{$d}}) {
-			print " \"$matrix{$d}->{$k}\"";
+			print OUT " \"$matrix{$d}->{$k}\"";
 		}
-		print "\n";
+		print OUT "\n";
 	}
+	close OUT;
 }
 
 &get_valid_comps;

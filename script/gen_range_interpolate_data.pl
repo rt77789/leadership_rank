@@ -3,7 +3,7 @@
 use Configer;
 
 my %config = Configer::init;
-my $prefix = Configer::get_prefix;
+my $prefix = Configer::get('prefix');
 
 for my $f (`ls ../resource/${prefix}_range_price/*.price.range`) {
 	chomp $f;

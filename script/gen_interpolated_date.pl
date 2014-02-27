@@ -19,8 +19,6 @@ for my $f (`ls ../resource/${prefix}_market_cap_clean/*.cap.clean`) {
 		push @td, $tk[0];
 	}
 	close IN;
-
-	$mc_date{$f} = [min(@td), max(@td), $#td + 1];
 }
 
 for my $f (`ls ../resource/${prefix}_day_price/*.price`) {
@@ -37,6 +35,5 @@ for my $f (`ls ../resource/${prefix}_day_price/*.price`) {
 		push @td, $tk[0];
 	}
 	close IN;
-	$price_date{$f} = [min(@td), max(@td), $#td + 1];
 }
 

@@ -1,6 +1,10 @@
 #!/usr/bin/perl -w
+use Configer;
 
-my $clist = 'sp500';
+my %config = Configer::init;
+my $clist = Configer::get('prefix');
+
+#my $clist = 'sp500';
 my $dir = '../resource';
 
 my %asc2num;
