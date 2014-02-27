@@ -3,41 +3,49 @@
 use LWP;
 
 my $ag = LWP::UserAgent->new;
-my %sp100;
+my $company_list = 'sp100';
+my %company_list;
 
-sub read_sp100_list {
-	open IN, '<../resource/sp100.list' or die "open ../resource/sp100.list failed...\n";
+sub read_company_list {
+	open IN, "<../resource/${company_list}.list" or die "open ../resource/${company_list}.list failed...\n";
 	while(<IN>) {
 		chomp;
 		s{\.}{-}isg;
-		$sp100{$_}++;
+		$company_list{$_}++;
 	}
 	close IN;
 }
 
 sub download_ticker {
 	my $ticker = $_[0];
-	my $url = "http://finance.yahoo.com/q/hp?s=${ticker}+Historical+Prices";
-	my $res = $ag->get($url);
-	my $con = $res->content;
+	my $url = "http://ichart.finance.yahoo.com/table.csv?s=${ticker}&d=1&e=21&f=2014&g=d&a=7&b=19&c=1950&ignore=.csv";
 
-	if($con =~ m{<a\s+href="([^"]+.csv)"}is) {
-		print $1, "\n";
+	my $res;
+	while(1) {	
+		$res = $ag->get($url);
+		last if $res->is_success;
+		warn "$ticker cannot be downloaded...\n";
+	}
+
+	if($res->is_success) {
+		open OUT, ">../resource/${company_list}_day_price/$ticker.price" or die "open ../resource/${company_list}_day_price/$ticker.price";
+		print OUT $res->content;
+		close OUT;
 	}
 	else {
-		die "can't match .csv file.";
+		warn "$ticker cannot be downloaded...\n";
 	}
 }
 
-sub download_sp100 {
-	&read_sp100_list;
-	for my $ti (sort keys %sp100) {
-		print $ti, "\n";
+sub download_all {
+	&read_company_list;
+	for my $ti (sort keys %company_list) {
+		print $ti, " is downloading...\n";
 		&download_ticker($ti);
 	}
 }
 
-#&download_sp100;
+&download_all;
 
-&download_ticker("DELL");
+#&download_ticker("WPO");
 #&download_data("MSFT");
