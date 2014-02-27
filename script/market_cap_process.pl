@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-my $clist = 'sp100';
+my $clist = 'sp500';
 my $dir = '../resource';
 
 my %asc2num;
@@ -31,7 +31,7 @@ for my $f (`ls $dir/${clist}_market_cap/`) {
 		#$cap *= 1000000 if $unit eq 'M';
 
 		#print "$asc2num{$mon}, $day, $year, $cap\n";
-		print OUT "$year-$asc2num{$mon}-$day,$cap\n";
+		print OUT sprintf("%04d%02d%02d,%s\n", $year, $asc2num{$mon}, $day, $cap);
 	}
 	close OUT;
 	close IN;
