@@ -23,7 +23,7 @@ plot_sector_dynamic_influence <- function() {
 
 	p = ggplot(d) + 
 	geom_line(aes(x = date, y = value, group = factor(sector), color = factor(sector)), size=0.3) + 
-	scale_x_discrete(breaks = c(pos), labels = c(labels2[pos])) + 
+	scale_x_discrete(breaks = c(pos), labels = c(labels[pos])) + 
 	facet_grid(sector ~ ., scales = "free") + 
 	theme(axis.text.y = element_blank(), 
 	axis.ticks.y = element_blank(), 

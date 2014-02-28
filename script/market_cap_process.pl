@@ -21,6 +21,7 @@ $asc2num{'Oct.'} = 10;
 $asc2num{'Nov.'} = 11;
 $asc2num{'Dec.'} = 12;
 
+
 for my $f (`ls $dir/${clist}_market_cap/`) {
 	chomp $f;
 	print "$dir/${clist}_market_cap/$f\n";	

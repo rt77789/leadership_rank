@@ -39,8 +39,8 @@ cal_sp500_sector_index <- function(sec, weight.type) {
 #### Compute leadership index, topk is the used number of leaders.
 cal_leader_index <- function(topk = 0) {
 	
-	from = as.numeric(config['start_stamp', 2])
-	to = as.numeric(config['end_stamp', 2]) - as.numeric(config['step_seconds', 2]) * (as.numeric(config['window_size', 2]) - 1)
+	from = as.numeric(config['start_date', 2])
+	to = as.numeric(config['end_date', 2]) - as.numeric(config['step_seconds', 2]) * (as.numeric(config['window_size', 2]) - 1)
 	by = as.numeric(config['step_seconds', 2]) * as.numeric(config['step_day', 2])
 	#print(to)
 	data.list = c()
@@ -94,8 +94,8 @@ cal_leader_index <- function(topk = 0) {
 
 ### Construct the file name by suffix.
 get_filename_by_suffix <- function(suf) {
-	from = as.numeric(config["start_stamp", 2])
-	to = as.numeric(config["end_stamp", 2])
+	from = as.numeric(config["start_date", 2])
+	to = as.numeric(config["end_date", 2])
 	mifile = paste(config['data_dir', 2], config["file_prefix", 2], from, "_", to, ".", suf, sep = "")
 }
 

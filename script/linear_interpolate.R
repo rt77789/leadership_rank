@@ -1,8 +1,10 @@
 
 args <- commandArgs(TRUE)
 
+config = read.table('~/code/project/leadership_rank/resource/config.file', header=F, sep=',');
+
 d = read.table(args[1], header=F, sep=',');
-id = read.table('~/code/project/leadership_rank/resource/sp500.datelist', header=F);
+id = read.table(paste('~/code/project/leadership_rank/resource/', config[config[,1] == 'prefix', 2],'.datelist', sep=''), header=F);
 res = data.frame(id=1:nrow(id), date=id);
 
 for(i in 3:ncol(d)) {

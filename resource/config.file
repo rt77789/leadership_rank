@@ -9,6 +9,8 @@ file_prefix,sp100_128_
 window_size,128
 start_stamp,1374586200
 end_stamp,1374609600
-step_seconds,60
-data_dir,../data/sp100_128_1374586200_1374609600_step_1_ccf_0_prior/
+start_date,20000101
+end_date,20140101
+step_seconds,1
+data_dir,../data/
 pics_dir,../tex/pics/

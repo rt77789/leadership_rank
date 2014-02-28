@@ -5,8 +5,8 @@ use Configer;
 my %config = Configer::init;
 my $prefix = Configer::get('prefix');
 
-my $from = 20000101;
-my $to = 20140101;
+my $from = Configer::get('start_date');
+my $to = Configer::get('end_date');
 
 my %date_list;
 my %mc_date;

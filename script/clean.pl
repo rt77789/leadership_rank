@@ -1,28 +1,24 @@
 #!/usr/bin/perl -w
+use Configer;
 
-my $of = $ARGV[0];
-die "please input a name of directory.\n" unless defined $of;
-$of = "../data/$of";
-my @suf = (
-    'data',
-    'mat',
-    'rank',
-    'crank',
-    'log',
-    'mrank',
-    'mcrank',
-    'mscore',
-    'mcscore',
-    'msector',
-    'mindustry',
-    'evolute',
-    'cevolute',
-	'raw'
-);
+my $file_prefix = Configer::get('file_prefix');
+my $prefix = Configer::get('prefix');
 
-`mkdir $of` unless -d $of;
+## clean market_cap_clean.
+`rm ../resource/${prefix}_market_cap_clean/*.clean`;
 
-if(-d $of) {
-    #print "mv ../data/*.$_ $of\n" for @suf;
-    `mv ../data/*.$_ $of` for @suf;
-}
+## clean range_price and range_market_cap.
+`rm ../resource/${prefix}_range_price/*.price.range`;
+`rm ../resource/${prefix}_range_market_cap/*.cap.range`;
+
+## clean range_interpolated.
+`rm ../resource/${prefix}_range_interpolated_price/*.price.range.interpolate`;
+`rm ../resource/${prefix}_range_interpolated_market_cap/*.cap.range.interpolate`;
+
+## clean the data files.
+`rm ../data/*.data`;
+`rm ../data/*.log`;
+`rm ../data/*.rank`;
+`rm ../data/*.crank`;
+`rm ../data/*.mat`;
+
