@@ -243,7 +243,7 @@ cal_seed_potential <- function(mat, topk) {
 }
 
 ## Compute potentials
-cal_potential <- function(mat) {
+cal_potential <- function(mat, cap) {
 
 	# Make sure each column of mat is normalized, which means sum of each column is 1.
 	mat = t(apply(mat, 2, function(x) {
@@ -257,7 +257,7 @@ cal_potential <- function(mat) {
 	n = nrow(mat)
 	seeds = c()
 	
-	cap = read.table("../resource/sp500_market_cap.table", header = F)
+	#cap = read.table("../resource/sp500_market_cap.table", header = F)
 	rownames(cap) = cap[, 1]
 	
 	rank = sapply(1:n, function(x) {
@@ -324,7 +324,9 @@ run <- function(epf) {
 	}), decreasing = T))
 
 	###### Circuit model. ######
-	rank = cal_potential(mat)
+
+	cap = read.table(paste(epf, ".dcap", sep=""), header = F)
+	rank = cal_potential(mat, cap)
 	rr = disp_stock_rank(rank)
 
 	write.table(rr, file = paste(epf, "_comps_thresh_0.crank", sep = ""), row.names = F, col.names = F, quote = T)

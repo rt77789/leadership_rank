@@ -15,7 +15,7 @@ plot_sector_dynamic_influence <- function() {
 	labels = levels(d[, 1])
 	labels2 = 1:length(levels(d[, 1]))
 	levels(d[, 1]) = 1:length(levels(d[, 1]))
-	pos = seq(from = 1, to = length(labels), by = 10)
+	pos = seq(from = 1, to = length(labels), by = 64)
 	d = subset(d, model == "mean_crank")
 	
 	

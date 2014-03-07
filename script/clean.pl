@@ -17,6 +17,7 @@ my $prefix = Configer::get('prefix');
 
 ## clean the data files.
 `rm ../data/*.data`;
+`rm ../data/*.dcap`;
 `rm ../data/*.log`;
 `rm ../data/*.rank`;
 `rm ../data/*.crank`;

@@ -1,5 +1,6 @@
 prefix,sp100
 data_matrix,../data/matrix.data
+mc_matrix,../data/mc_matrix.data
 common_stamp,common_stamp
 hist_price,n15intraday
 max_day,391
