@@ -4,16 +4,16 @@ use Configer;
 my %config = Configer::init;
 my $prefix = Configer::get('prefix');
 
-#print "generate intraday data file...\n";
-#`perl download_intraday_data_goog.pl`;
-### gen_intraday_matrix.
-#print "run gen_intraday_matrix...\n";
-#`perl gen_intraday_matrix.pl`;
-#
-### gen_window_data.
-#print "run gen_window_data...\n";
-#`perl gen_window_data.pl`;
-#
+print "generate intraday data file...\n";
+`perl download_intraday_data_goog.pl`;
+## gen_intraday_matrix.
+print "run gen_intraday_matrix...\n";
+`perl gen_intraday_matrix.pl`;
+
+## gen_window_data.
+print "run gen_window_data...\n";
+`perl gen_window_data.pl`;
+
 
 print "clean previous data...\n";
 `perl clean.pl`;

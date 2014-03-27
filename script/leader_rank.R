@@ -303,7 +303,7 @@ run <- function(epf) {
 	#epf = '../data/sp_128'
 	sink(paste(epf, ".log", sep = ""))
 
-	mat = build_graph(paste(epf, ".data", sep = ""), 0, 'ccf')
+	mat = build_graph(paste(epf, ".data", sep = ""), 0.5, 'ccf')
 	write.table(mat, file = paste(epf, "_comps_thresh_0.mat", sep = ""), row.names = T, col.names = T)
 
 	#### Pagerank Model #####
