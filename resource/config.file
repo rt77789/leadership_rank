@@ -9,7 +9,7 @@ company_list,sp100.list
 file_prefix,sp100_128_
 window_size,128
 start_stamp,1374586200
-end_stamp,1374609600
+end_stamp,1376314200
 start_date,20000101
 end_date,20140101
 step_seconds,1
